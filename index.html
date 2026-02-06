@@ -1,0 +1,2429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCAT Command Center - Your Path to 520+ | The #1 MCAT Study Dashboard</title>
+  <meta name="description" content="The all-in-one MCAT study dashboard with AAMC content outline, score tracking, gamification, and Pomodoro timer. One file. Works offline. $10 one-time.">
+  <meta name="keywords" content="MCAT, MCAT study, MCAT prep, MCAT dashboard, MCAT tracker, pre-med, medical school, AAMC, MCAT score tracker">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MCAT Command Center - Your Path to 520+">
+  <meta property="og:description" content="The all-in-one MCAT study dashboard. Track 300+ AAMC topics, practice tests, study hours, and more. One file. Works offline. $10.">
+  <meta property="og:image" content="https://mcatcommand.com/og-image.png">
+  <meta property="og:url" content="https://mcatcommand.com">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MCAT Command Center - Your Path to 520+">
+  <meta name="twitter:description" content="The all-in-one MCAT study dashboard. Track 300+ AAMC topics, practice tests, study hours, and more. $10 one-time.">
+  <meta name="twitter:image" content="https://mcatcommand.com/og-image.png">
+
+  <link rel="canonical" href="https://mcatcommand.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-primary: #0a0b0f;
+      --bg-secondary: #12141a;
+      --bg-card: #1a1d24;
+      --bg-elevated: #22262f;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --text-primary: #f5f5f7;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-green: #22c55e;
+      --accent-amber: #f59e0b;
+      --accent-cyan: #06b6d4;
+      --accent-red: #ef4444;
+      --gradient-1: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      --gradient-2: linear-gradient(135deg, #22c55e 0%, #06b6d4 100%);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ========== UTILITIES ========== */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .gradient-text {
+      background: var(--gradient-1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 16px;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--gradient-1);
+      color: white;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card);
+      border-color: var(--border-hover);
+    }
+
+    .btn-large { padding: 18px 36px; font-size: 18px; border-radius: 14px; }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scale-in {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========== BACKGROUND EFFECTS ========== */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow-1 { top: -200px; left: -100px; background: var(--accent-blue); }
+    .bg-glow-2 { top: 50%; right: -200px; background: var(--accent-purple); }
+    .bg-glow-3 { bottom: -100px; left: 30%; background: var(--accent-green); opacity: 0.1; }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 16px 0;
+      transition: all 0.3s;
+    }
+
+    .navbar.scrolled {
+      background: rgba(10, 11, 15, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* Mobile menu */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 28px;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(10, 11, 15, 0.98);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .mobile-menu a:hover { color: var(--accent-blue); }
+
+    .mobile-menu-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 32px;
+      cursor: pointer;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 700px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent-blue);
+      margin-bottom: 24px;
+      animation: fade-up 0.8s ease-out;
+    }
+
+    .hero-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse-glow 2s infinite;
+    }
+
+    .hero h1 {
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      animation: fade-up 0.8s ease-out 0.1s both;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 540px;
+      animation: fade-up 0.8s ease-out 0.2s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fade-up 0.8s ease-out 0.3s both;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 60px;
+      animation: fade-up 0.8s ease-out 0.4s both;
+    }
+
+    .hero-stat { text-align: left; }
+
+    .hero-stat-value {
+      font-size: 36px;
+      font-weight: 800;
+      background: var(--gradient-2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .hero-visual {
+      position: absolute;
+      right: -100px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 750px;
+      animation: scale-in 1s ease-out 0.3s both;
+    }
+
+    .hero-mockup {
+      position: relative;
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .mockup-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .mockup-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .mockup-dot.red { background: #ff5f57; }
+    .mockup-dot.yellow { background: #febc2e; }
+    .mockup-dot.green { background: #28c840; }
+
+    .mockup-content { padding: 20px; min-height: 400px; }
+
+    .mockup-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .mockup-stat-card {
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      padding: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .mockup-stat-icon { font-size: 18px; margin-bottom: 8px; }
+    .mockup-stat-value { font-size: 22px; font-weight: 700; }
+    .mockup-stat-label { font-size: 11px; color: var(--text-muted); }
+
+    .mockup-chart {
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      height: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mockup-chart-title { font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+
+    .chart-line { position: absolute; bottom: 20px; left: 20px; right: 20px; height: 80px; }
+    .chart-line svg { width: 100%; height: 100%; }
+
+    /* ========== SOCIAL PROOF ========== */
+    .social-proof {
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+
+    .social-proof .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+
+    .social-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .social-item strong {
+      color: var(--text-primary);
+      font-size: 18px;
+    }
+
+    /* ========== INTERACTIVE DEMO ========== */
+    .demo-section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .demo-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .demo-tab {
+      padding: 10px 20px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .demo-tab:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .demo-tab.active {
+      background: var(--gradient-1);
+      border-color: transparent;
+      color: white;
+      font-weight: 600;
+    }
+
+    .demo-screen-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+      background: #0f1117;
+      position: relative;
+    }
+
+    .demo-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #161922;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .demo-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .demo-dot.red { background: #ff5f57; }
+    .demo-dot.yellow { background: #ffbd2e; }
+    .demo-dot.green { background: #28c840; }
+
+    .demo-url {
+      margin-left: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.05);
+      padding: 4px 16px;
+      border-radius: 6px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .demo-screen {
+      display: none;
+      padding: 24px;
+      min-height: 420px;
+      animation: demoFadeIn 0.4s ease;
+    }
+
+    .demo-screen.active {
+      display: block;
+    }
+
+    @keyframes demoFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Dashboard mock */
+    .mock-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .mock-stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .mock-stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .mock-stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+    }
+
+    .mock-stat-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .mock-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .mock-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .mock-card-title {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .mock-progress-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent-green) 0% 100%, rgba(255,255,255,0.1) 100% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+
+    .mock-progress-inner {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #0f1117;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-green);
+    }
+
+    .mock-heatmap {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 3px;
+    }
+
+    .mock-heatmap-cell {
+      aspect-ratio: 1;
+      border-radius: 3px;
+      background: rgba(139, 92, 246, 0.15);
+    }
+
+    .mock-heatmap-cell.l1 { background: rgba(139, 92, 246, 0.25); }
+    .mock-heatmap-cell.l2 { background: rgba(139, 92, 246, 0.45); }
+    .mock-heatmap-cell.l3 { background: rgba(139, 92, 246, 0.65); }
+    .mock-heatmap-cell.l4 { background: rgba(139, 92, 246, 0.85); }
+
+    /* Score trend mock */
+    .mock-chart {
+      position: relative;
+      height: 160px;
+      margin-top: 8px;
+    }
+
+    .mock-chart svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Study log mock */
+    .mock-table-header {
+      display: grid;
+      grid-template-columns: 80px 1fr 80px 1fr;
+      gap: 8px;
+      padding: 8px 12px;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+
+    .mock-table-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 80px 1fr;
+      gap: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .mock-table-row:hover {
+      background: rgba(255,255,255,0.03);
+    }
+
+    .mock-table-row .hours {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Content mastery mock */
+    .mock-sections {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .mock-section-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .mock-section-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .mock-section-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.1);
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .mock-section-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .mock-topic-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .mock-topic-pct {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* Resources mock */
+    .mock-resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .mock-resource-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .mock-resource-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .mock-resource-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .mock-resource-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .mock-resource-progress {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.1);
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .mock-resource-progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent-green);
+    }
+
+    @media (max-width: 768px) {
+      .mock-stats { grid-template-columns: repeat(2, 1fr); }
+      .mock-row { grid-template-columns: 1fr; }
+      .mock-sections { grid-template-columns: repeat(2, 1fr); }
+      .mock-resource-grid { grid-template-columns: 1fr; }
+      .mock-table-header,
+      .mock-table-row { grid-template-columns: 70px 1fr 60px; }
+      .mock-table-header > :last-child,
+      .mock-table-row > :last-child { display: none; }
+      .demo-screen { padding: 16px; min-height: 320px; }
+    }
+
+    /* ========== FEATURES ========== */
+    .features {
+      padding: 120px 0;
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 80px;
+    }
+
+    .section-label {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-purple);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .section-desc {
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .feature-icon.blue { background: rgba(59, 130, 246, 0.15); }
+    .feature-icon.purple { background: rgba(139, 92, 246, 0.15); }
+    .feature-icon.green { background: rgba(34, 197, 94, 0.15); }
+    .feature-icon.amber { background: rgba(245, 158, 11, 0.15); }
+    .feature-icon.cyan { background: rgba(6, 182, 212, 0.15); }
+    .feature-icon.pink { background: rgba(236, 72, 153, 0.15); }
+
+    .feature-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+    .feature-desc { color: var(--text-secondary); font-size: 15px; line-height: 1.7; }
+
+    /* ========== SHOWCASE ========== */
+    .showcase {
+      padding: 120px 0;
+      background: var(--bg-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .showcase-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .showcase-text h2 {
+      font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 800;
+      margin-bottom: 24px;
+    }
+
+    .showcase-text p {
+      color: var(--text-secondary);
+      font-size: 17px;
+      margin-bottom: 32px;
+    }
+
+    .showcase-features { display: flex; flex-direction: column; gap: 16px; }
+
+    .showcase-feature { display: flex; align-items: flex-start; gap: 16px; }
+
+    .showcase-feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(34, 197, 94, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--accent-green);
+    }
+
+    .showcase-feature-text h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .showcase-feature-text p { font-size: 14px; color: var(--text-muted); margin: 0; }
+
+    .showcase-visual { position: relative; }
+
+    .showcase-image {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ========== COMPARISON TABLE ========== */
+    .comparison {
+      padding: 120px 0;
+      position: relative;
+    }
+
+    .comparison-table {
+      max-width: 900px;
+      margin: 0 auto;
+      overflow-x: auto;
+    }
+
+    .comparison-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 18px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+    }
+
+    .comparison-table th {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-primary);
+      padding-bottom: 20px;
+    }
+
+    .comparison-table th:first-child,
+    .comparison-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .comparison-table th.highlight {
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 12px 12px 0 0;
+      color: var(--accent-purple);
+    }
+
+    .comparison-table td.highlight {
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .comparison-table tr:last-child td.highlight {
+      border-radius: 0 0 12px 12px;
+    }
+
+    .check { color: var(--accent-green); font-size: 20px; }
+    .cross { color: var(--text-muted); font-size: 16px; }
+
+    /* ========== TESTIMONIALS ========== */
+    .testimonials { padding: 120px 0; }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    .testimonial-stars { color: var(--accent-amber); font-size: 18px; margin-bottom: 16px; }
+
+    .testimonial-text {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .testimonial-author { display: flex; align-items: center; gap: 14px; }
+
+    .testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--gradient-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .testimonial-name { font-weight: 600; font-size: 15px; }
+    .testimonial-score { font-size: 13px; color: var(--accent-green); }
+
+    /* ========== PRICING ========== */
+    .pricing {
+      padding: 120px 0;
+      background: var(--bg-secondary);
+    }
+
+    .pricing-card {
+      max-width: 540px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 2px solid var(--accent-purple);
+      border-radius: 24px;
+      padding: 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-1);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      padding: 6px 12px;
+      background: var(--accent-green);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 100px;
+    }
+
+    .pricing-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .pricing-subtitle { color: var(--text-muted); margin-bottom: 24px; }
+
+    .pricing-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .pricing-currency { font-size: 28px; font-weight: 700; color: var(--text-secondary); }
+
+    .pricing-amount {
+      font-size: 72px;
+      font-weight: 800;
+      background: var(--gradient-2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .pricing-period { color: var(--text-muted); margin-bottom: 32px; }
+
+    .pricing-features { text-align: left; margin-bottom: 32px; }
+
+    .pricing-feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pricing-feature:last-child { border-bottom: none; }
+
+    .pricing-check {
+      width: 24px;
+      height: 24px;
+      background: rgba(34, 197, 94, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-green);
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .pricing-cta { width: 100%; }
+
+    /* Trust badges */
+    .trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .trust-badge-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ========== HOW IT WORKS ========== */
+    .how-it-works {
+      padding: 120px 0;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      position: relative;
+    }
+
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+      opacity: 0.3;
+    }
+
+    .step-card {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-number {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid var(--accent-purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0 auto 24px;
+      color: var(--accent-purple);
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .step-desc {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ========== FAQ ========== */
+    .faq { padding: 120px 0; }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .faq-trigger {
+      width: 100%;
+      padding: 20px 24px;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+
+    .faq-trigger:hover { color: var(--accent-blue); }
+
+    .faq-trigger .faq-icon {
+      font-size: 20px;
+      transition: transform 0.3s;
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .faq-item.open .faq-trigger .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-item.open .faq-content {
+      max-height: 300px;
+    }
+
+    .faq-answer {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 0 24px 20px;
+    }
+
+    /* ========== CTA ========== */
+    .cta {
+      padding: 120px 0;
+      background: var(--bg-secondary);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-content { position: relative; z-index: 10; }
+
+    .cta h2 {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .cta p {
+      font-size: 20px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-guarantee {
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      padding: 60px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-text { color: var(--text-muted); font-size: 14px; }
+
+    .footer-links { display: flex; gap: 24px; }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text-primary); }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      .hero-visual { display: none; }
+      .hero-content { max-width: 100%; text-align: center; }
+      .hero p { margin-left: auto; margin-right: auto; }
+      .hero-cta { justify-content: center; }
+      .hero-stats { justify-content: center; }
+
+      .features-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .showcase-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .showcase-features { align-items: center; }
+
+      .faq-grid,
+      .steps-grid { grid-template-columns: 1fr; }
+
+      .steps-grid::before { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .comparison-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .comparison-table table { min-width: 600px; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: block; }
+
+      .hero-stats {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .hero-stat { text-align: center; }
+
+      .social-proof .container {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .trust-badges {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .footer .container {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')" aria-label="Close menu">&times;</button>
+    <a href="#features" onclick="document.getElementById('mobileMenu').classList.remove('open')">Features</a>
+    <a href="#demo" onclick="document.getElementById('mobileMenu').classList.remove('open')">Demo</a>
+    <a href="#testimonials" onclick="document.getElementById('mobileMenu').classList.remove('open')">Reviews</a>
+    <a href="#pricing" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
+    <a href="#faq" onclick="document.getElementById('mobileMenu').classList.remove('open')">FAQ</a>
+    <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary" onclick="document.getElementById('mobileMenu').classList.remove('open')">Get Started</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="logo">
+        <div class="logo-icon">M</div>
+        <span>MCAT <span class="gradient-text">Command</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#demo">Demo</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary">Get Started</a>
+      </div>
+      <button class="mobile-menu-btn" onclick="document.getElementById('mobileMenu').classList.add('open')" aria-label="Open menu">&#9776;</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          Used by pre-meds at 50+ universities
+        </div>
+        <h1>Your Path to <span class="gradient-text">520+</span> Starts Here</h1>
+        <p>The all-in-one MCAT study dashboard that tracks your progress, optimizes your prep, and keeps you motivated. One file. Works offline. Yours forever.</p>
+        <div class="hero-cta">
+          <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large gumroad-link">
+            Get Instant Access &mdash; $10
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#demo" class="btn btn-secondary btn-large">Watch Demo</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-value">300+</div>
+            <div class="hero-stat-label">AAMC topics tracked</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">7</div>
+            <div class="hero-stat-label">Tracking modules</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">0</div>
+            <div class="hero-stat-label">Subscriptions needed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-mockup">
+          <div class="mockup-header">
+            <div class="mockup-dot red"></div>
+            <div class="mockup-dot yellow"></div>
+            <div class="mockup-dot green"></div>
+          </div>
+          <div class="mockup-content">
+            <div class="mockup-stats">
+              <div class="mockup-stat-card">
+                <div class="mockup-stat-icon">&#128202;</div>
+                <div class="mockup-stat-value" style="color: var(--accent-blue)">156h</div>
+                <div class="mockup-stat-label">Study Hours</div>
+              </div>
+              <div class="mockup-stat-card">
+                <div class="mockup-stat-icon">&#128221;</div>
+                <div class="mockup-stat-value" style="color: var(--accent-green)">7</div>
+                <div class="mockup-stat-label">Practice Tests</div>
+              </div>
+              <div class="mockup-stat-card">
+                <div class="mockup-stat-icon">&#128218;</div>
+                <div class="mockup-stat-value" style="color: var(--accent-purple)">124</div>
+                <div class="mockup-stat-label">Topics Mastered</div>
+              </div>
+              <div class="mockup-stat-card">
+                <div class="mockup-stat-icon">&#128293;</div>
+                <div class="mockup-stat-value" style="color: var(--accent-amber)">12</div>
+                <div class="mockup-stat-label">Day Streak</div>
+              </div>
+            </div>
+            <div class="mockup-chart">
+              <div class="mockup-chart-title">Score Progression</div>
+              <div class="chart-line">
+                <svg viewBox="0 0 300 80" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#3b82f6"/>
+                      <stop offset="100%" style="stop-color:#8b5cf6"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,70 Q50,65 75,55 T150,40 T225,25 T300,10" stroke="url(#chartGradient)" stroke-width="3" fill="none"/>
+                  <circle cx="0" cy="70" r="5" fill="#3b82f6"/>
+                  <circle cx="75" cy="55" r="5" fill="#3b82f6"/>
+                  <circle cx="150" cy="40" r="5" fill="#8b5cf6"/>
+                  <circle cx="225" cy="25" r="5" fill="#8b5cf6"/>
+                  <circle cx="300" cy="10" r="5" fill="#8b5cf6"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof -->
+  <section class="social-proof">
+    <div class="container">
+      <div class="social-item">
+        <span>&#11088;&#11088;&#11088;&#11088;&#11088;</span>
+        <span><strong>4.9/5</strong> rating</span>
+      </div>
+      <div class="social-item">
+        <span>&#128274;</span>
+        <span><strong>100% private</strong> &mdash; data never leaves your computer</span>
+      </div>
+      <div class="social-item">
+        <span>&#9889;</span>
+        <span><strong>Instant download</strong> &mdash; start studying in 30 seconds</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo -->
+  <section class="demo-section" id="demo">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">See It In Action</div>
+        <h2 class="section-title">Explore the <span class="gradient-text">Dashboard</span></h2>
+        <p class="section-desc">Click through each tab to see exactly what you get.</p>
+      </div>
+
+      <div class="demo-tabs animate-on-scroll">
+        <button class="demo-tab active" onclick="showDemo('dashboard')">Dashboard</button>
+        <button class="demo-tab" onclick="showDemo('scores')">Score Tracker</button>
+        <button class="demo-tab" onclick="showDemo('content')">Content Mastery</button>
+        <button class="demo-tab" onclick="showDemo('log')">Study Log</button>
+        <button class="demo-tab" onclick="showDemo('resources')">Resources</button>
+      </div>
+
+      <div class="demo-screen-wrapper animate-on-scroll">
+        <div class="demo-titlebar">
+          <div class="demo-dot red"></div>
+          <div class="demo-dot yellow"></div>
+          <div class="demo-dot green"></div>
+          <div class="demo-url">mcat-dashboard.html</div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div class="demo-screen active" id="demo-dashboard">
+          <div class="mock-stats">
+            <div class="mock-stat">
+              <div class="mock-stat-label">Days Until Test</div>
+              <div class="mock-stat-value" style="color: var(--accent-purple);">15</div>
+              <div class="mock-stat-sub">One month left</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">Target Score</div>
+              <div class="mock-stat-value" style="color: var(--accent-green);">515</div>
+              <div class="mock-stat-sub">90th percentile</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">Hours Studied</div>
+              <div class="mock-stat-value" style="color: var(--accent-amber);">456</div>
+              <div class="mock-stat-sub">100% of goal</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">Latest Score</div>
+              <div class="mock-stat-value" style="color: var(--accent-cyan);">518</div>
+              <div class="mock-stat-sub">95th %ile</div>
+            </div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-card">
+              <div class="mock-card-title">Today's Progress</div>
+              <div style="display:flex;align-items:center;gap:16px;">
+                <div class="mock-progress-ring">
+                  <div class="mock-progress-inner">100%</div>
+                </div>
+                <div>
+                  <div style="font-size:24px;font-weight:800;">6.4h</div>
+                  <div style="font-size:12px;color:var(--text-muted);">of 6h goal</div>
+                </div>
+              </div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-title">12-Week Study Heatmap</div>
+              <div class="mock-heatmap">
+                <div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l3"></div>
+                <div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l4"></div>
+                <div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l4"></div>
+                <div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l2"></div><div class="mock-heatmap-cell l1"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l3"></div><div class="mock-heatmap-cell l4"></div><div class="mock-heatmap-cell l2"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-card">
+              <div class="mock-card-title">Section Mastery</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;">Bio/Biochem</span><span style="font-size:13px;font-weight:700;color:var(--accent-green);">85%</span></div>
+                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;"><div style="width:85%;height:100%;background:linear-gradient(90deg,var(--accent-amber),var(--accent-green));border-radius:2px;"></div></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;">Chem/Phys</span><span style="font-size:13px;font-weight:700;color:var(--accent-green);">83%</span></div>
+                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;"><div style="width:83%;height:100%;background:linear-gradient(90deg,var(--accent-blue),var(--accent-purple));border-radius:2px;"></div></div>
+              </div>
+            </div>
+            <div class="mock-card">
+              <div class="mock-card-title">Focus Areas</div>
+              <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+                <div style="display:flex;justify-content:space-between;"><span>Amino acid classification</span><span style="color:var(--accent-amber);">25%</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Enzyme kinetics</span><span style="color:var(--accent-amber);">30%</span></div>
+                <div style="display:flex;justify-content:space-between;"><span>Optics &amp; light</span><span style="color:var(--accent-amber);">35%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Tracker Screen -->
+        <div class="demo-screen" id="demo-scores">
+          <div class="mock-stats">
+            <div class="mock-stat">
+              <div class="mock-stat-label">Latest</div>
+              <div class="mock-stat-value" style="color: var(--accent-green);">518</div>
+              <div class="mock-stat-sub">95th %ile</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">Average</div>
+              <div class="mock-stat-value" style="color: var(--accent-blue);">509</div>
+              <div class="mock-stat-sub">7 tests</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">Best</div>
+              <div class="mock-stat-value" style="color: var(--accent-purple);">518</div>
+              <div class="mock-stat-sub">+22 from first</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">To Target</div>
+              <div class="mock-stat-value" style="color: var(--accent-green);">&#10003;</div>
+              <div class="mock-stat-sub">515 target hit</div>
+            </div>
+          </div>
+          <div class="mock-card" style="margin-bottom:16px;">
+            <div class="mock-card-title">Score Trend</div>
+            <div class="mock-chart">
+              <svg viewBox="0 0 700 160" fill="none">
+                <line x1="0" y1="40" x2="700" y2="40" stroke="var(--accent-green)" stroke-width="1.5" stroke-dasharray="8 6" opacity="0.5"/>
+                <text x="620" y="35" fill="var(--accent-green)" font-size="11" opacity="0.7">Target: 515</text>
+                <polyline points="50,130 150,110 250,95 350,75 420,68 500,52 580,45 660,40" stroke="var(--accent-blue)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="50" cy="130" r="5" fill="var(--accent-blue)"/><text x="40" y="148" fill="var(--text-secondary)" font-size="11">496</text>
+                <circle cx="150" cy="110" r="5" fill="var(--accent-blue)"/><text x="140" y="128" fill="var(--text-secondary)" font-size="11">501</text>
+                <circle cx="250" cy="95" r="5" fill="var(--accent-blue)"/><text x="240" y="113" fill="var(--text-secondary)" font-size="11">506</text>
+                <circle cx="350" cy="75" r="5" fill="var(--accent-blue)"/><text x="340" y="93" fill="var(--text-secondary)" font-size="11">510</text>
+                <circle cx="420" cy="68" r="5" fill="var(--accent-blue)"/><text x="410" y="86" fill="var(--text-secondary)" font-size="11">513</text>
+                <circle cx="500" cy="52" r="5" fill="var(--accent-blue)"/><text x="490" y="70" fill="var(--text-secondary)" font-size="11">516</text>
+                <circle cx="580" cy="45" r="5" fill="var(--accent-blue)"/><text x="570" y="63" fill="var(--text-secondary)" font-size="11">516</text>
+                <circle cx="660" cy="40" r="6" fill="var(--accent-green)"/><text x="648" y="58" fill="var(--accent-green)" font-size="12" font-weight="700">518</text>
+              </svg>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-card-title">Log Practice Test</div>
+            <div style="display:grid;grid-template-columns: 1fr 1fr 60px 60px 60px 60px auto;gap:8px;align-items:center;">
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);">02/06/2026</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);">Select...</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);text-align:center;">C/P</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);text-align:center;">CARS</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);text-align:center;">B/B</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);text-align:center;">P/S</div>
+              <div style="background:var(--accent-purple);padding:8px 16px;border-radius:8px;font-size:12px;color:white;text-align:center;font-weight:600;">Add</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Mastery Screen -->
+        <div class="demo-screen" id="demo-content">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div>
+              <div style="font-size:18px;font-weight:700;">AAMC Content Outline</div>
+              <div style="font-size:12px;color:var(--text-muted);">Track your mastery of official MCAT topics</div>
+            </div>
+            <div style="font-size:28px;font-weight:800;color:var(--accent-green);">85%<span style="font-size:12px;font-weight:400;color:var(--text-muted);display:block;">Overall Mastery</span></div>
+          </div>
+          <div class="mock-sections">
+            <div class="mock-section-card">
+              <div class="mock-section-name" style="color:var(--accent-amber);">Bio/Biochem</div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">125 topics</span><span style="font-weight:700;">85%</span></div>
+              <div class="mock-section-bar"><div class="mock-section-fill" style="width:85%;background:var(--accent-amber);"></div></div>
+            </div>
+            <div class="mock-section-card" style="border-color:rgba(99,102,241,0.3);">
+              <div class="mock-section-name" style="color:var(--accent-blue);">Chem/Phys</div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">117 topics</span><span style="font-weight:700;">83%</span></div>
+              <div class="mock-section-bar"><div class="mock-section-fill" style="width:83%;background:var(--accent-blue);"></div></div>
+            </div>
+            <div class="mock-section-card">
+              <div class="mock-section-name" style="color:var(--accent-purple);">Psych/Soc</div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">132 topics</span><span style="font-weight:700;">87%</span></div>
+              <div class="mock-section-bar"><div class="mock-section-fill" style="width:87%;background:var(--accent-purple);"></div></div>
+            </div>
+            <div class="mock-section-card">
+              <div class="mock-section-name" style="color:var(--accent-green);">CARS</div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--text-muted);">21 topics</span><span style="font-weight:700;">82%</span></div>
+              <div class="mock-section-bar"><div class="mock-section-fill" style="width:82%;background:var(--accent-green);"></div></div>
+            </div>
+          </div>
+          <div class="mock-card" style="margin-bottom:10px;">
+            <div style="font-size:14px;font-weight:600;color:var(--accent-blue);margin-bottom:12px;">Chemical &amp; Physical Foundations &middot; <span style="color:var(--text-muted);font-weight:400;">117 topics</span></div>
+            <div class="mock-topic-row"><span>4A &middot; Motion, Forces, Work, Energy</span><div><span class="mock-topic-pct" style="color:var(--accent-blue);">77%</span> <span style="color:var(--text-muted);font-size:11px;">14 topics</span></div></div>
+            <div class="mock-topic-row"><span>4B &middot; Fluids &amp; Gas Phase</span><div><span class="mock-topic-pct" style="color:var(--accent-green);">88%</span> <span style="color:var(--text-muted);font-size:11px;">13 topics</span></div></div>
+            <div class="mock-topic-row"><span>4C &middot; Electrochemistry &amp; Circuits</span><div><span class="mock-topic-pct" style="color:var(--accent-blue);">83%</span> <span style="color:var(--text-muted);font-size:11px;">13 topics</span></div></div>
+            <div class="mock-topic-row"><span>4D &middot; Light &amp; Sound</span><div><span class="mock-topic-pct" style="color:var(--accent-green);">92%</span> <span style="color:var(--text-muted);font-size:11px;">13 topics</span></div></div>
+          </div>
+        </div>
+
+        <!-- Study Log Screen -->
+        <div class="demo-screen" id="demo-log">
+          <div class="mock-stats" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="mock-stat">
+              <div class="mock-stat-label">Today</div>
+              <div class="mock-stat-value" style="color: var(--accent-green);">6</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">This Week</div>
+              <div class="mock-stat-value" style="color: var(--accent-purple);">116</div>
+            </div>
+            <div class="mock-stat">
+              <div class="mock-stat-label">All Time</div>
+              <div class="mock-stat-value" style="color: var(--accent-amber);">456</div>
+            </div>
+          </div>
+          <div class="mock-card" style="margin-bottom:16px;">
+            <div class="mock-card-title">Log a Session</div>
+            <div style="display:grid;grid-template-columns: 1fr 1fr 80px 1fr auto;gap:8px;align-items:center;">
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);">02/06/2026</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);">Content Review</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);text-align:center;">1h</div>
+              <div style="background:rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;font-size:12px;color:var(--text-muted);">Optional notes</div>
+              <div style="background:var(--accent-green);padding:8px 20px;border-radius:8px;font-size:12px;color:white;font-weight:600;">+ Add</div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div class="mock-card-title" style="margin-bottom:0;">Recent Sessions</div>
+              <div style="font-size:11px;color:var(--accent-green);">87 entries</div>
+            </div>
+            <div class="mock-table-header"><span>Date</span><span>Category</span><span>Hours</span><span>Notes</span></div>
+            <div class="mock-table-row"><span>Feb 6</span><span>Content Review</span><span class="hours">1h</span><span style="color:var(--text-muted);">&mdash;</span></div>
+            <div class="mock-table-row"><span>Feb 17</span><span>Review</span><span class="hours">6h</span><span style="color:var(--text-muted);">&mdash;</span></div>
+            <div class="mock-table-row"><span>Feb 16</span><span>Practice Questions</span><span class="hours">6h</span><span style="color:var(--text-muted);">&mdash;</span></div>
+            <div class="mock-table-row"><span>Feb 15</span><span>Full Length</span><span class="hours">6.75h</span><span style="color:var(--text-muted);">&mdash;</span></div>
+            <div class="mock-table-row"><span>Feb 14</span><span>Full Length</span><span class="hours">6h</span><span style="color:var(--text-muted);">&mdash;</span></div>
+          </div>
+        </div>
+
+        <!-- Resources Screen -->
+        <div class="demo-screen" id="demo-resources">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div>
+              <div style="font-size:18px;font-weight:700;">Resource Library</div>
+              <div style="font-size:12px;color:var(--text-muted);">Track all your MCAT prep materials in one place</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <div style="background:var(--accent-purple);padding:6px 14px;border-radius:8px;font-size:12px;color:white;font-weight:600;">My Resources</div>
+              <div style="background:rgba(255,255,255,0.06);padding:6px 14px;border-radius:8px;font-size:12px;color:var(--text-muted);">Browse Library</div>
+            </div>
+          </div>
+          <div class="mock-resource-grid">
+            <div class="mock-resource-card">
+              <div class="mock-resource-icon" style="background:rgba(59,130,246,0.15);color:var(--accent-blue);">&#128218;</div>
+              <div class="mock-resource-name">Kaplan Biology</div>
+              <div class="mock-resource-meta">Book &middot; 12 chapters</div>
+              <div class="mock-resource-progress"><div class="mock-resource-progress-fill" style="width:75%;"></div></div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">9 / 12 chapters done</div>
+            </div>
+            <div class="mock-resource-card">
+              <div class="mock-resource-icon" style="background:rgba(139,92,246,0.15);color:var(--accent-purple);">&#128196;</div>
+              <div class="mock-resource-name">UWorld QBank</div>
+              <div class="mock-resource-meta">QBank &middot; 1,900 questions</div>
+              <div class="mock-resource-progress"><div class="mock-resource-progress-fill" style="width:62%;background:var(--accent-purple);"></div></div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">1,178 done &middot; 78% correct</div>
+            </div>
+            <div class="mock-resource-card">
+              <div class="mock-resource-icon" style="background:rgba(34,197,94,0.15);color:var(--accent-green);">&#127183;</div>
+              <div class="mock-resource-name">MilesDown Anki</div>
+              <div class="mock-resource-meta">Anki &middot; 2,800 cards</div>
+              <div class="mock-resource-progress"><div class="mock-resource-progress-fill" style="width:88%;"></div></div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">2,464 mature &middot; 120/day avg</div>
+            </div>
+            <div class="mock-resource-card">
+              <div class="mock-resource-icon" style="background:rgba(245,158,11,0.15);color:var(--accent-amber);">&#127909;</div>
+              <div class="mock-resource-name">Khan Academy</div>
+              <div class="mock-resource-meta">Video Course &middot; 340 videos</div>
+              <div class="mock-resource-progress"><div class="mock-resource-progress-fill" style="width:95%;background:var(--accent-amber);"></div></div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">323 / 340 watched</div>
+            </div>
+            <div class="mock-resource-card">
+              <div class="mock-resource-icon" style="background:rgba(6,182,212,0.15);color:var(--accent-cyan);">&#128203;</div>
+              <div class="mock-resource-name">AAMC FL 1-4</div>
+              <div class="mock-resource-meta">Full Lengths &middot; Official</div>
+              <div class="mock-resource-progress"><div class="mock-resource-progress-fill" style="width:100%;background:var(--accent-cyan);"></div></div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">4 / 4 completed &#10003;</div>
+            </div>
+            <div class="mock-resource-card">
+              <div class="mock-resource-icon" style="background:rgba(239,68,68,0.15);color:var(--accent-red);">&#128218;</div>
+              <div class="mock-resource-name">AAMC Section Bank</div>
+              <div class="mock-resource-meta">QBank &middot; 300 questions</div>
+              <div class="mock-resource-progress"><div class="mock-resource-progress-fill" style="width:45%;background:var(--accent-red);"></div></div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">135 done &middot; 72% correct</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Everything You Need to <span class="gradient-text">Crush the MCAT</span></h2>
+        <p class="section-desc">A comprehensive dashboard designed specifically for MCAT prep. No bloated apps. No monthly fees. Just results.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon blue">&#128202;</div>
+          <h3 class="feature-title">Smart Analytics</h3>
+          <p class="feature-desc">Track study hours, practice test scores, and progress across all 4 sections with beautiful visualizations and insights.</p>
+        </div>
+
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon purple">&#128218;</div>
+          <h3 class="feature-title">AAMC Content Outline</h3>
+          <p class="feature-desc">The official AAMC content outline with 300+ topics organized by Foundational Concepts. Track mastery for each topic from 0 to 100%.</p>
+        </div>
+
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon green">&#127918;</div>
+          <h3 class="feature-title">Gamification & XP</h3>
+          <p class="feature-desc">Earn XP for studying, level up through 10 ranks, and unlock 12 achievements. Stay motivated with daily streaks and confetti celebrations.</p>
+        </div>
+
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon amber">&#9201;</div>
+          <h3 class="feature-title">Pomodoro Timer</h3>
+          <p class="feature-desc">Built-in focus timer with customizable sessions and category tracking. Log your time automatically as you study.</p>
+        </div>
+
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon cyan">&#128203;</div>
+          <h3 class="feature-title">Resource Tracker</h3>
+          <p class="feature-desc">Track all your resources in one place: books, question banks, Anki decks, video courses, and full-length exams with smart progress tracking.</p>
+        </div>
+
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon pink">&#128293;</div>
+          <h3 class="feature-title">Score & Streak Tracking</h3>
+          <p class="feature-desc">Log practice tests with section-by-section breakdowns. See your score progression over time. Maintain daily study streaks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Start Studying in <span class="gradient-text">30 Seconds</span></h2>
+        <p class="section-desc">No accounts, no setup, no internet required after download.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Buy & Download</h3>
+          <p class="step-desc">Pay once ($10) and instantly download a single HTML file. No signup needed.</p>
+        </div>
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Open in Browser</h3>
+          <p class="step-desc">Double-click the file to open it in Chrome, Edge, or any modern browser. That's it.</p>
+        </div>
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Track Everything</h3>
+          <p class="step-desc">Set your test date, start logging study sessions, and watch your progress grow. All data stays on your computer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase 1 - Content Outline -->
+  <section class="showcase">
+    <div class="container">
+      <div class="showcase-content">
+        <div class="showcase-text animate-on-scroll">
+          <h2>Track Every <span class="gradient-text">Foundational Concept</span></h2>
+          <p>The complete AAMC content outline built right in. Track mastery for each topic and see exactly where you need to focus.</p>
+          <div class="showcase-features">
+            <div class="showcase-feature">
+              <div class="showcase-feature-icon">&#10003;</div>
+              <div class="showcase-feature-text">
+                <h4>10 Foundational Concepts</h4>
+                <p>Bio/Biochem, Chem/Physics, and Psych/Soc all covered</p>
+              </div>
+            </div>
+            <div class="showcase-feature">
+              <div class="showcase-feature-icon">&#10003;</div>
+              <div class="showcase-feature-text">
+                <h4>300+ Specific Topics</h4>
+                <p>From amino acids to social psychology, every testable topic</p>
+              </div>
+            </div>
+            <div class="showcase-feature">
+              <div class="showcase-feature-icon">&#10003;</div>
+              <div class="showcase-feature-text">
+                <h4>Mastery Tracking</h4>
+                <p>5-level system from "Not Started" to "Mastered"</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="showcase-visual animate-on-scroll">
+          <div class="showcase-image" style="padding: 24px;">
+            <div style="background: var(--bg-elevated); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 600;">Bio/Biochem Foundations</span>
+                <span style="color: var(--accent-green); font-weight: 600;">68%</span>
+              </div>
+              <div style="height: 8px; background: var(--bg-primary); border-radius: 4px;">
+                <div style="height: 100%; width: 68%; background: var(--accent-green); border-radius: 4px;"></div>
+              </div>
+            </div>
+            <div style="background: var(--bg-elevated); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 600;">Chem/Physics Foundations</span>
+                <span style="color: var(--accent-blue); font-weight: 600;">52%</span>
+              </div>
+              <div style="height: 8px; background: var(--bg-primary); border-radius: 4px;">
+                <div style="height: 100%; width: 52%; background: var(--accent-blue); border-radius: 4px;"></div>
+              </div>
+            </div>
+            <div style="background: var(--bg-elevated); border-radius: 12px; padding: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 600;">Psych/Soc Foundations</span>
+                <span style="color: var(--accent-purple); font-weight: 600;">75%</span>
+              </div>
+              <div style="height: 8px; background: var(--bg-primary); border-radius: 4px;">
+                <div style="height: 100%; width: 75%; background: var(--accent-purple); border-radius: 4px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Table -->
+  <section class="comparison" id="compare">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">Why Command Center</div>
+        <h2 class="section-title">Stop Using <span class="gradient-text">Spreadsheets</span></h2>
+        <p class="section-desc">See how MCAT Command Center stacks up against what you're probably using now.</p>
+      </div>
+
+      <div class="comparison-table animate-on-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th class="highlight">MCAT Command</th>
+              <th>Google Sheets</th>
+              <th>Notion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>AAMC content outline (300+ topics)</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">Build yourself</span></td>
+              <td><span class="cross">Build yourself</span></td>
+            </tr>
+            <tr>
+              <td>Score trend visualizations</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">Manual charts</span></td>
+              <td><span class="cross">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>Built-in Pomodoro timer</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10007;</span></td>
+              <td><span class="cross">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>Gamification (XP, streaks, achievements)</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10007;</span></td>
+              <td><span class="cross">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>Resource tracker (books, QBanks, Anki)</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">Build yourself</span></td>
+              <td><span class="cross">Build yourself</span></td>
+            </tr>
+            <tr>
+              <td>Works 100% offline</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10007;</span></td>
+              <td><span class="cross">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>Data stays on your computer</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">Google servers</span></td>
+              <td><span class="cross">Notion servers</span></td>
+            </tr>
+            <tr>
+              <td>One-time price</td>
+              <td class="highlight"><span class="check">$10</span></td>
+              <td><span class="check" style="color: var(--text-muted)">Free</span></td>
+              <td><span class="cross">$10/mo</span></td>
+            </tr>
+            <tr>
+              <td>Setup time</td>
+              <td class="highlight"><span class="check">30 seconds</span></td>
+              <td><span class="cross">Hours</span></td>
+              <td><span class="cross">Hours</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">Testimonials</div>
+        <h2 class="section-title">Loved by <span class="gradient-text">Future Doctors</span></h2>
+        <p class="section-desc">Pre-med students are using Command Center to organize their MCAT prep.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card animate-on-scroll">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="testimonial-text">"The gamification aspect kept me motivated during my 3-month study period. Seeing my XP grow and unlocking achievements made studying actually enjoyable."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">JK</div>
+            <div>
+              <div class="testimonial-name">Jessica K.</div>
+              <div class="testimonial-score">518 scorer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card animate-on-scroll">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="testimonial-text">"Finally, a dashboard that tracks exactly what AAMC tests on. I could see my weak spots immediately and focus my study time where it mattered most."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">MR</div>
+            <div>
+              <div class="testimonial-name">Marcus R.</div>
+              <div class="testimonial-score">496 to 516 improvement</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card animate-on-scroll">
+          <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="testimonial-text">"The streak system helped me build consistent study habits. I went from studying sporadically to maintaining a 45-day streak. Worth way more than $10."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SP</div>
+            <div>
+              <div class="testimonial-name">Sarah P.</div>
+              <div class="testimonial-score">520 scorer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">Pricing</div>
+        <h2 class="section-title">One Price. <span class="gradient-text">Everything Included.</span></h2>
+        <p class="section-desc">No subscriptions. No hidden fees. Pay once, use forever.</p>
+      </div>
+
+      <div class="pricing-card animate-on-scroll">
+        <div class="pricing-badge">Best Value</div>
+        <h3 class="pricing-title">MCAT Command Center</h3>
+        <p class="pricing-subtitle">Complete MCAT Study Dashboard</p>
+        <div class="pricing-price">
+          <span class="pricing-currency">$</span>
+          <span class="pricing-amount">10</span>
+        </div>
+        <p class="pricing-period">One-time payment &bull; Lifetime access</p>
+
+        <div class="pricing-features">
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Smart Analytics Dashboard</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Complete AAMC Content Outline (300+ topics)</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Practice Test Tracker with Score History</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Pomodoro Focus Timer</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>XP System & 12 Achievements</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Resource & Materials Tracker</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Study Streak & Motivation System</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Works offline &mdash; no internet needed</span>
+          </div>
+          <div class="pricing-feature">
+            <div class="pricing-check">&#10003;</div>
+            <span>Lifetime updates included</span>
+          </div>
+        </div>
+
+        <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large pricing-cta gumroad-link">
+          Get Instant Access
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+
+        <div class="trust-badges">
+          <div class="trust-badge">
+            <div class="trust-badge-icon">&#128274;</div>
+            <span>Secure payment</span>
+          </div>
+          <div class="trust-badge">
+            <div class="trust-badge-icon">&#128190;</div>
+            <span>Yours forever</span>
+          </div>
+          <div class="trust-badge">
+            <div class="trust-badge-icon">&#9889;</div>
+            <span>Instant delivery</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Common Questions</h2>
+      </div>
+
+      <div class="faq-grid">
+        <div class="faq-item open animate-on-scroll">
+          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+            <span>How does the dashboard work?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">It's a single HTML file that runs entirely in your browser. Double-click to open, start tracking. Your data is saved locally on your computer &mdash; no account or internet connection needed after download.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate-on-scroll">
+          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+            <span>Can I use it on multiple devices?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">Yes! Copy the file to any device. You can also export/import your data as JSON to sync between computers.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate-on-scroll">
+          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+            <span>What browsers does it work on?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">Chrome and Edge give you the best experience with auto-save to a local file. Safari, Firefox, and other modern browsers work great too with localStorage backup.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate-on-scroll">
+          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+            <span>What's included in the AAMC content?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">All 10 Foundational Concepts with their Content Categories and 300+ specific topics &mdash; exactly what's tested on the real MCAT, organized by Bio/Biochem, Chem/Physics, Psych/Soc, and CARS.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate-on-scroll">
+          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+            <span>Is my data private?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">100% private. Your data never leaves your computer. There are no servers, no accounts, no tracking. Everything is stored locally in your browser or in a JSON file you control.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate-on-scroll">
+          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+            <span>Do I get updates?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">Yes! Lifetime updates are included. When a new version is released, you'll get access to download the updated file. Your data can be imported into the new version.</p>
+          </div>
+        </div>
+
+        <div class="faq-item animate-on-scroll">
+          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+            <span>Why not just use a spreadsheet?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">You could build your own tracker in Google Sheets, but it takes hours and lacks built-in features like the AAMC outline, Pomodoro timer, gamification, score visualizations, and resource tracking. Command Center gives you all of that ready to go for less than a coffee.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content animate-on-scroll">
+        <h2>Ready to <span class="gradient-text">Crush the MCAT?</span></h2>
+        <p>Stop wasting time building spreadsheets. Start studying smarter today.</p>
+        <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large gumroad-link">
+          Get Started for $10
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <p class="cta-guarantee">Instant download &bull; No subscription &bull; Yours forever</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-text">&copy; 2025 MCAT Command Center. Built for future doctors.</div>
+      <div class="footer-links">
+        <a href="mailto:support@mcatcommand.com">Support</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Animate on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Animated counter for hero stats
+    function animateValue(el, start, end, duration) {
+      let startTs = null;
+      const step = (ts) => {
+        if (!startTs) startTs = ts;
+        const progress = Math.min((ts - startTs) / duration, 1);
+        el.textContent = Math.floor(progress * (end - start) + start).toLocaleString() + (el.dataset.suffix || '');
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.hero-stat-value').forEach(counter => {
+            const text = counter.textContent;
+            const num = parseInt(text.replace(/[^0-9]/g, ''));
+            if (!isNaN(num) && !counter.dataset.animated) {
+              counter.dataset.animated = 'true';
+              counter.dataset.suffix = text.includes('+') ? '+' : '';
+              animateValue(counter, 0, num, 2000);
+            }
+          });
+          statsObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    const heroStats = document.querySelector('.hero-stats');
+    if (heroStats) statsObserver.observe(heroStats);
+
+    // Close mobile menu on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.getElementById('mobileMenu').classList.remove('open');
+      }
+    });
+
+    // Demo tab switching
+    function showDemo(tab) {
+      document.querySelectorAll('.demo-screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('demo-' + tab).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // Auto-rotate demo tabs
+    let demoInterval;
+    const demoTabs = ['dashboard', 'scores', 'content', 'log', 'resources'];
+    let demoIndex = 0;
+
+    function startDemoRotation() {
+      demoInterval = setInterval(() => {
+        demoIndex = (demoIndex + 1) % demoTabs.length;
+        document.querySelectorAll('.demo-screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('demo-' + demoTabs[demoIndex]).classList.add('active');
+        document.querySelectorAll('.demo-tab')[demoIndex].classList.add('active');
+      }, 4000);
+    }
+
+    // Start rotation, pause on hover
+    startDemoRotation();
+    const demoWrapper = document.querySelector('.demo-screen-wrapper');
+    if (demoWrapper) {
+      demoWrapper.addEventListener('mouseenter', () => clearInterval(demoInterval));
+      demoWrapper.addEventListener('mouseleave', startDemoRotation);
+    }
+
+    // Pause rotation on manual tab click
+    document.querySelectorAll('.demo-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        clearInterval(demoInterval);
+        demoIndex = demoTabs.indexOf(document.querySelector('.demo-screen.active')?.id.replace('demo-', ''));
+      });
+    });
+  </script>
+</body>
+</html>
