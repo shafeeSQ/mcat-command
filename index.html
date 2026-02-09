@@ -35,12 +35,12 @@
       --text-secondary: #a1a1aa;
       --text-muted: #71717a;
       --accent-blue: #3b82f6;
-      --accent-purple: #8b5cf6;
+      --accent-purple: #0891B2;
       --accent-green: #22c55e;
       --accent-amber: #f59e0b;
       --accent-cyan: #06b6d4;
       --accent-red: #ef4444;
-      --gradient-1: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      --gradient-1: linear-gradient(135deg, #0891B2 0%, #06B6D4 50%, #22C55E 100%);
       --gradient-2: linear-gradient(135deg, #22c55e 0%, #06b6d4 100%);
     }
 
@@ -87,14 +87,14 @@
     }
 
     .btn-primary {
-      background: var(--gradient-1);
+      background: linear-gradient(135deg, #0891B2 0%, #06B6D4 100%);
       color: white;
-      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+      box-shadow: 0 4px 20px rgba(8, 145, 178, 0.3);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 8px 30px rgba(8, 145, 178, 0.4);
     }
 
     .btn-secondary {
@@ -295,10 +295,17 @@
       overflow: hidden;
     }
 
+    .hero > .container {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+    }
+
     .hero-content {
       position: relative;
       z-index: 10;
-      max-width: 700px;
+      flex: 1;
+      min-width: 0;
     }
 
     .hero-badge {
@@ -372,11 +379,12 @@
     }
 
     .hero-visual {
-      position: absolute;
-      right: -100px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 750px;
+      position: relative;
+      right: auto;
+      top: auto;
+      transform: none;
+      flex: 0 0 520px;
+      width: 520px;
       animation: scale-in 1s ease-out 0.3s both;
     }
 
@@ -414,10 +422,22 @@
     }
 
     .mockup-stat-card {
-      background: var(--bg-elevated);
-      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 12px;
       padding: 14px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mockup-stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
     }
 
     .mockup-stat-icon { font-size: 18px; margin-bottom: 8px; }
@@ -653,13 +673,13 @@
     .mock-heatmap-cell {
       aspect-ratio: 1;
       border-radius: 3px;
-      background: rgba(139, 92, 246, 0.15);
+      background: rgba(8, 145, 178, 0.15);
     }
 
-    .mock-heatmap-cell.l1 { background: rgba(139, 92, 246, 0.25); }
-    .mock-heatmap-cell.l2 { background: rgba(139, 92, 246, 0.45); }
-    .mock-heatmap-cell.l3 { background: rgba(139, 92, 246, 0.65); }
-    .mock-heatmap-cell.l4 { background: rgba(139, 92, 246, 0.85); }
+    .mock-heatmap-cell.l1 { background: rgba(8, 145, 178, 0.25); }
+    .mock-heatmap-cell.l2 { background: rgba(8, 145, 178, 0.45); }
+    .mock-heatmap-cell.l3 { background: rgba(8, 145, 178, 0.65); }
+    .mock-heatmap-cell.l4 { background: rgba(8, 145, 178, 0.85); }
 
     /* Score trend mock */
     .mock-chart {
@@ -835,8 +855,8 @@
     .section-label {
       display: inline-block;
       padding: 6px 14px;
-      background: rgba(139, 92, 246, 0.1);
-      border: 1px solid rgba(139, 92, 246, 0.3);
+      background: rgba(8, 145, 178, 0.1);
+      border: 1px solid rgba(8, 145, 178, 0.3);
       border-radius: 100px;
       font-size: 13px;
       font-weight: 600;
@@ -887,7 +907,7 @@
     }
 
     .feature-icon.blue { background: rgba(59, 130, 246, 0.15); }
-    .feature-icon.purple { background: rgba(139, 92, 246, 0.15); }
+    .feature-icon.purple { background: rgba(8, 145, 178, 0.15); }
     .feature-icon.green { background: rgba(34, 197, 94, 0.15); }
     .feature-icon.amber { background: rgba(245, 158, 11, 0.15); }
     .feature-icon.cyan { background: rgba(6, 182, 212, 0.15); }
@@ -992,13 +1012,13 @@
     }
 
     .comparison-table th.highlight {
-      background: rgba(139, 92, 246, 0.1);
+      background: rgba(8, 145, 178, 0.1);
       border-radius: 12px 12px 0 0;
       color: var(--accent-purple);
     }
 
     .comparison-table td.highlight {
-      background: rgba(139, 92, 246, 0.05);
+      background: rgba(8, 145, 178, 0.05);
     }
 
     .comparison-table tr:last-child td.highlight {
@@ -1018,10 +1038,29 @@
     }
 
     .testimonial-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
+      background: rgba(26, 29, 36, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 20px;
       padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .testimonial-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
     }
 
     .testimonial-stars { color: var(--accent-amber); font-size: 18px; margin-bottom: 16px; }
@@ -1306,7 +1345,7 @@
       transform: translate(-50%, -50%);
       width: 800px;
       height: 800px;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(8, 145, 178, 0.15) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -1360,8 +1399,9 @@
 
     /* ========== RESPONSIVE ========== */
     @media (max-width: 1024px) {
+      .hero > .container { flex-direction: column; }
       .hero-visual { display: none; }
-      .hero-content { max-width: 100%; text-align: center; }
+      .hero-content { max-width: 600px; text-align: center; }
       .hero p { margin-left: auto; margin-right: auto; }
       .hero-cta { justify-content: center; }
       .hero-stats { justify-content: center; }
@@ -1421,6 +1461,20 @@
         text-align: center;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .animate-on-scroll { opacity: 1 !important; transform: none !important; }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
   </style>
 </head>
 <body>
@@ -1466,7 +1520,7 @@
       <div class="hero-content">
         <div class="hero-badge">
           <span class="dot"></span>
-          Used by pre-meds at 50+ universities
+          Built for serious MCAT prep
         </div>
         <h1>Your Path to <span class="gradient-text">520+</span> Starts Here</h1>
         <p>The all-in-one MCAT study dashboard that tracks your progress, optimizes your prep, and keeps you motivated. One file. Works offline. Yours forever.</p>
@@ -1475,7 +1529,7 @@
             Get Instant Access &mdash; $10
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
-          <a href="#demo" class="btn btn-secondary btn-large">Watch Demo</a>
+          <a href="#demo" class="btn btn-secondary btn-large">See It In Action</a>
         </div>
         <div class="hero-stats">
           <div class="hero-stat">
@@ -1503,22 +1557,22 @@
           <div class="mockup-content">
             <div class="mockup-stats">
               <div class="mockup-stat-card">
-                <div class="mockup-stat-icon">&#128202;</div>
+                <div class="mockup-stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
                 <div class="mockup-stat-value" style="color: var(--accent-blue)">156h</div>
                 <div class="mockup-stat-label">Study Hours</div>
               </div>
               <div class="mockup-stat-card">
-                <div class="mockup-stat-icon">&#128221;</div>
+                <div class="mockup-stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></div>
                 <div class="mockup-stat-value" style="color: var(--accent-green)">7</div>
                 <div class="mockup-stat-label">Practice Tests</div>
               </div>
               <div class="mockup-stat-card">
-                <div class="mockup-stat-icon">&#128218;</div>
+                <div class="mockup-stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></div>
                 <div class="mockup-stat-value" style="color: var(--accent-purple)">124</div>
                 <div class="mockup-stat-label">Topics Mastered</div>
               </div>
               <div class="mockup-stat-card">
-                <div class="mockup-stat-icon">&#128293;</div>
+                <div class="mockup-stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
                 <div class="mockup-stat-value" style="color: var(--accent-amber)">12</div>
                 <div class="mockup-stat-label">Day Streak</div>
               </div>
@@ -1530,15 +1584,15 @@
                   <defs>
                     <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" style="stop-color:#3b82f6"/>
-                      <stop offset="100%" style="stop-color:#8b5cf6"/>
+                      <stop offset="100%" style="stop-color:#0891B2"/>
                     </linearGradient>
                   </defs>
                   <path d="M0,70 Q50,65 75,55 T150,40 T225,25 T300,10" stroke="url(#chartGradient)" stroke-width="3" fill="none"/>
                   <circle cx="0" cy="70" r="5" fill="#3b82f6"/>
                   <circle cx="75" cy="55" r="5" fill="#3b82f6"/>
-                  <circle cx="150" cy="40" r="5" fill="#8b5cf6"/>
-                  <circle cx="225" cy="25" r="5" fill="#8b5cf6"/>
-                  <circle cx="300" cy="10" r="5" fill="#8b5cf6"/>
+                  <circle cx="150" cy="40" r="5" fill="#0891B2"/>
+                  <circle cx="225" cy="25" r="5" fill="#0891B2"/>
+                  <circle cx="300" cy="10" r="5" fill="#0891B2"/>
                 </svg>
               </div>
             </div>
@@ -1553,7 +1607,7 @@
     <div class="container">
       <div class="social-item">
         <span>&#11088;&#11088;&#11088;&#11088;&#11088;</span>
-        <span><strong>4.9/5</strong> rating</span>
+        <span><strong>5/5</strong> early user rating</span>
       </div>
       <div class="social-item">
         <span>&#128274;</span>
@@ -1816,7 +1870,7 @@
               <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">9 / 12 chapters done</div>
             </div>
             <div class="mock-resource-card">
-              <div class="mock-resource-icon" style="background:rgba(139,92,246,0.15);color:var(--accent-purple);">&#128196;</div>
+              <div class="mock-resource-icon" style="background:rgba(8,145,178,0.15);color:var(--accent-purple);">&#128196;</div>
               <div class="mock-resource-name">UWorld QBank</div>
               <div class="mock-resource-meta">QBank &middot; 1,900 questions</div>
               <div class="mock-resource-progress"><div class="mock-resource-progress-fill" style="width:62%;background:var(--accent-purple);"></div></div>
@@ -2085,44 +2139,44 @@
   <section class="testimonials" id="testimonials">
     <div class="container">
       <div class="section-header animate-on-scroll">
-        <div class="section-label">Testimonials</div>
-        <h2 class="section-title">Loved by <span class="gradient-text">Future Doctors</span></h2>
-        <p class="section-desc">Pre-med students are using Command Center to organize their MCAT prep.</p>
+        <div class="section-label">Reviews</div>
+        <h2 class="section-title">What <span class="gradient-text">Students</span> Are Saying</h2>
+        <p class="section-desc">Early feedback from pre-meds using Command Center for their prep.</p>
       </div>
 
       <div class="testimonials-grid">
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial-text">"The gamification aspect kept me motivated during my 3-month study period. Seeing my XP grow and unlocking achievements made studying actually enjoyable."</p>
+          <p class="testimonial-text">"I was using like 4 different spreadsheets to track everything before this. Having the AAMC outline built in with the mastery tracking saved me so much setup time. Actually worth it."</p>
           <div class="testimonial-author">
-            <div class="testimonial-avatar">JK</div>
+            <div class="testimonial-avatar">RP</div>
             <div>
-              <div class="testimonial-name">Jessica K.</div>
-              <div class="testimonial-score">518 scorer</div>
+              <div class="testimonial-name">Riya P.</div>
+              <div class="testimonial-score">Studying for Jan MCAT</div>
             </div>
           </div>
         </div>
 
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial-text">"Finally, a dashboard that tracks exactly what AAMC tests on. I could see my weak spots immediately and focus my study time where it mattered most."</p>
+          <p class="testimonial-text">"The streak tracker and XP system honestly kept me going during weeks where I wanted to quit. It sounds dumb but seeing that number go up every day made me not want to break the chain."</p>
           <div class="testimonial-author">
-            <div class="testimonial-avatar">MR</div>
+            <div class="testimonial-avatar">DJ</div>
             <div>
-              <div class="testimonial-name">Marcus R.</div>
-              <div class="testimonial-score">496 to 516 improvement</div>
+              <div class="testimonial-name">DeAndre J.</div>
+              <div class="testimonial-score">3-month study plan</div>
             </div>
           </div>
         </div>
 
         <div class="testimonial-card animate-on-scroll">
           <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p class="testimonial-text">"The streak system helped me build consistent study habits. I went from studying sporadically to maintaining a 45-day streak. Worth way more than $10."</p>
+          <p class="testimonial-text">"Love that it's just one HTML file and works offline. I don't have great wifi at home so having everything local was a huge plus. The score tracking is clean too."</p>
           <div class="testimonial-author">
-            <div class="testimonial-avatar">SP</div>
+            <div class="testimonial-avatar">KN</div>
             <div>
-              <div class="testimonial-name">Sarah P.</div>
-              <div class="testimonial-score">520 scorer</div>
+              <div class="testimonial-name">Kevin N.</div>
+              <div class="testimonial-score">Non-trad pre-med</div>
             </div>
           </div>
         </div>
@@ -2311,7 +2365,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-text">&copy; 2025 MCAT Command Center. Built for future doctors.</div>
+      <div class="footer-text">&copy; 2026 MCAT Command Center. Built for future doctors.</div>
       <div class="footer-links">
         <a href="mailto:support@mcatcommand.com">Support</a>
         <a href="#">Privacy</a>
