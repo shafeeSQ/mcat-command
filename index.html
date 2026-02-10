@@ -378,21 +378,12 @@
       margin-left: 8px;
     }
 
-    /* Typing effect — own fixed-height line */
-    .typing-line {
-      height: 30px;
-      margin-bottom: 32px;
-      animation: fade-up 0.8s ease-out 0.25s both;
-    }
+    /* Typing effect — inline in hero paragraph */
     .typing-text {
-      display: inline-block;
-      font-size: 18px;
-      color: var(--accent-purple);
-      font-weight: 600;
+      display: inline;
       border-right: 3px solid var(--accent-purple);
       animation: typing-cursor 1s infinite;
       padding-right: 4px;
-      letter-spacing: 0.3px;
     }
 
     /* Hero word animation */
@@ -436,134 +427,152 @@
       position: fixed;
       inset: 0;
       z-index: 10000;
+      background: #000;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #000;
-      pointer-events: all;
       overflow: hidden;
     }
 
-    .cinema-overlay.done { pointer-events: none; }
-
-    /* Ambient glow behind text */
-    .cinema-glow {
+    /* Radial pulse behind the number */
+    .cinema-pulse {
       position: absolute;
-      width: 600px;
-      height: 600px;
+      width: 500px;
+      height: 500px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(8,145,178,0.25) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(8,145,178,0.35) 0%, rgba(6,182,212,0.1) 40%, transparent 70%);
       opacity: 0;
-      transition: opacity 1.5s ease, transform 2s ease;
-      transform: scale(0.5);
-      pointer-events: none;
+      transform: scale(0.3);
+      animation: none;
     }
-    .cinema-overlay.phase-1 .cinema-glow {
+    @keyframes cinema-pulse-anim {
+      0% { transform: scale(0.3); opacity: 0; }
+      40% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .cinema-overlay.p1 .cinema-pulse {
+      animation: cinema-pulse-anim 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* The big number */
+    .cinema-number {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+    .cinema-five {
+      font-size: clamp(120px, 25vw, 280px);
+      font-weight: 900;
+      line-height: 0.85;
+      background: linear-gradient(180deg, #fff 30%, rgba(255,255,255,0.3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      filter: drop-shadow(0 0 60px rgba(8,145,178,0.5));
+    }
+    .cinema-overlay.p1 .cinema-five {
       opacity: 1;
       transform: scale(1);
     }
-    .cinema-overlay.phase-3 .cinema-glow {
-      opacity: 0;
-      transform: scale(2);
-      transition: all 0.8s ease;
-    }
-
-    /* Horizontal lines that sweep in */
-    .cinema-line {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent 0%, rgba(8,145,178,0.6) 20%, rgba(34,197,94,0.4) 50%, rgba(8,145,178,0.6) 80%, transparent 100%);
-      opacity: 0;
-      transform: scaleX(0);
-      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .cinema-line-top { top: 35%; }
-    .cinema-line-bottom { bottom: 35%; }
-    .cinema-overlay.phase-1 .cinema-line {
-      opacity: 1;
-      transform: scaleX(1);
-    }
-    .cinema-overlay.phase-3 .cinema-line {
-      opacity: 0;
-      transform: scaleX(0);
-      transition: all 0.4s ease;
-    }
-
-    /* Central text */
-    .cinema-center {
-      position: relative;
-      z-index: 3;
-      text-align: center;
-    }
-
-    .cinema-logo {
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      color: rgba(8,145,178,0.8);
-      margin-bottom: 24px;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .cinema-overlay.phase-1 .cinema-logo {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .cinema-title-line {
-      font-size: clamp(42px, 8vw, 90px);
+    .cinema-twenty {
+      font-size: clamp(60px, 12vw, 140px);
       font-weight: 900;
-      line-height: 1.05;
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .cinema-title-line:nth-child(2) { transition-delay: 0.15s; }
-    .cinema-title-line:nth-child(3) { transition-delay: 0.3s; }
-    .cinema-overlay.phase-2 .cinema-title-line {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .cinema-title-glow {
+      line-height: 1;
       background: linear-gradient(135deg, #0891B2, #06B6D4, #22C55E);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      filter: drop-shadow(0 0 30px rgba(8,145,178,0.4));
-    }
-
-    .cinema-subtitle-line {
-      font-size: clamp(16px, 2.5vw, 22px);
-      color: rgba(255,255,255,0.5);
-      margin-top: 20px;
       opacity: 0;
-      transition: opacity 0.8s ease 0.4s;
+      transform: translateX(-30px);
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+      filter: drop-shadow(0 0 40px rgba(8,145,178,0.6));
     }
-    .cinema-overlay.phase-2 .cinema-subtitle-line {
+    .cinema-overlay.p1 .cinema-twenty {
       opacity: 1;
+      transform: translateX(0);
+    }
+    .cinema-plus {
+      font-size: clamp(50px, 10vw, 120px);
+      font-weight: 900;
+      color: #22C55E;
+      opacity: 0;
+      transform: scale(2);
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.6s;
+      filter: drop-shadow(0 0 30px rgba(34,197,94,0.6));
+    }
+    .cinema-overlay.p1 .cinema-plus {
+      opacity: 1;
+      transform: scale(1);
     }
 
-    /* Zoom out + dissolve */
-    .cinema-overlay.phase-3 .cinema-center {
-      transform: scale(0.85);
+    /* Tagline under number */
+    .cinema-tag {
+      font-size: clamp(14px, 2vw, 20px);
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 24px;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.6s ease 0.9s;
+    }
+    .cinema-overlay.p1 .cinema-tag {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Horizontal accent lines */
+    .cinema-hr {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(8,145,178,0.8), rgba(34,197,94,0.5), transparent);
+      opacity: 0;
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+    }
+    .cinema-hr-l { left: 0; right: 55%; top: 50%; transform: translateX(-100%); }
+    .cinema-hr-r { right: 0; left: 55%; top: 50%; transform: translateX(100%); }
+    .cinema-overlay.p1 .cinema-hr {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Skip hint */
+    .cinema-skip {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.6s ease 1.5s;
+      z-index: 5;
+    }
+    .cinema-overlay.p1 .cinema-skip { opacity: 1; }
+
+    /* Exit: everything zooms and fades */
+    .cinema-overlay.p2 .cinema-number {
+      transform: scale(1.3);
       opacity: 0;
       transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
-
-    /* Final overlay dissolve */
-    .cinema-overlay.phase-4 {
+    .cinema-overlay.p2 .cinema-hr,
+    .cinema-overlay.p2 .cinema-tag,
+    .cinema-overlay.p2 .cinema-skip {
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.3s ease;
+    }
+    .cinema-overlay.p3 {
+      opacity: 0;
+      transition: opacity 0.6s ease;
     }
 
-    /* Prevent scroll during intro */
-    body.cinema-active {
-      overflow: hidden;
-    }
+    body.cinema-active { overflow: hidden; }
 
     @media (max-width: 768px) {
       .cursor-glow, .particles-container { display: none; }
@@ -1914,17 +1923,20 @@
   </style>
 </head>
 <body class="cinema-active">
-  <!-- Cinematic Intro Overlay -->
+  <!-- Cinematic Intro -->
   <div class="cinema-overlay" id="cinemaOverlay">
-    <div class="cinema-glow"></div>
-    <div class="cinema-line cinema-line-top"></div>
-    <div class="cinema-line cinema-line-bottom"></div>
-    <div class="cinema-center">
-      <div class="cinema-logo">MCAT Command Center</div>
-      <div class="cinema-title-line">Your Path to</div>
-      <div class="cinema-title-line"><span class="cinema-title-glow">520+</span></div>
-      <div class="cinema-subtitle-line">Starts now.</div>
+    <div class="cinema-pulse"></div>
+    <div class="cinema-hr cinema-hr-l"></div>
+    <div class="cinema-hr cinema-hr-r"></div>
+    <div class="cinema-number">
+      <div style="display:flex;align-items:baseline;justify-content:center;gap:0;">
+        <span class="cinema-five">5</span>
+        <span class="cinema-twenty">20</span>
+        <span class="cinema-plus">+</span>
+      </div>
+      <div class="cinema-tag">Your score starts here</div>
     </div>
+    <div class="cinema-skip">click anywhere to skip</div>
   </div>
 
   <!-- Scroll Progress Bar -->
@@ -1982,8 +1994,7 @@
           Built for serious MCAT prep
         </div>
         <h1><span class="hero-word" style="animation-delay:0.1s">Your</span> <span class="hero-word" style="animation-delay:0.15s">Path</span> <span class="hero-word" style="animation-delay:0.2s">to</span> <span class="hero-word gradient-text" style="animation-delay:0.3s">520+</span> <span class="hero-word" style="animation-delay:0.4s">Starts</span> <span class="hero-word" style="animation-delay:0.5s">Here</span></h1>
-        <p>The all-in-one MCAT study dashboard. Track your progress, optimize your prep, and stay motivated. One file. Works offline. Yours forever.</p>
-        <div class="typing-line"><span class="typing-text" id="typingText">tracks your progress</span></div>
+        <p>The all-in-one MCAT study dashboard that <span class="typing-text" id="typingText">tracks your progress</span>. One file. Works offline. Yours forever.</p>
         <div class="hero-cta">
           <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large btn-magnetic gumroad-link">
             Get Instant Access &mdash; $10
@@ -3054,49 +3065,24 @@
   </footer>
 
   <script>
-    // ========== CINEMATIC INTRO SEQUENCE ==========
-    (function runCinemaIntro() {
-      const overlay = document.getElementById('cinemaOverlay');
-      if (!overlay) return;
+    // ========== CINEMATIC INTRO ==========
+    (function() {
+      const ov = document.getElementById('cinemaOverlay');
+      if (!ov) return;
 
-      // Only show once per session
-      if (sessionStorage.getItem('cinema-seen')) {
-        overlay.remove();
-        document.body.classList.remove('cinema-active');
-        return;
+      function dismiss() {
+        if (ov.classList.contains('p2')) return;
+        ov.classList.add('p2');
+        setTimeout(() => { ov.classList.add('p3'); document.body.classList.remove('cinema-active'); }, 500);
+        setTimeout(() => ov.remove(), 1100);
       }
 
-      // Also allow click/tap to skip
-      let skipped = false;
-      overlay.addEventListener('click', () => {
-        if (skipped) return;
-        skipped = true;
-        overlay.classList.add('phase-4', 'done');
-        document.body.classList.remove('cinema-active');
-        sessionStorage.setItem('cinema-seen', '1');
-        setTimeout(() => overlay.remove(), 600);
-      });
+      ov.addEventListener('click', dismiss);
 
-      const timeline = [
-        // Phase 1: Ambient glow + lines sweep in + logo appears
-        [200, () => overlay.classList.add('phase-1')],
-        // Phase 2: Big title text reveals line by line
-        [900, () => overlay.classList.add('phase-2')],
-        // Phase 3: Hold, then shrink + dissolve text + glow expands
-        [3200, () => overlay.classList.add('phase-3')],
-        // Phase 4: Entire overlay fades to nothing
-        [3800, () => {
-          overlay.classList.add('phase-4', 'done');
-          document.body.classList.remove('cinema-active');
-        }],
-        // Remove from DOM
-        [4400, () => {
-          overlay.remove();
-          sessionStorage.setItem('cinema-seen', '1');
-        }]
-      ];
-
-      timeline.forEach(([delay, fn]) => setTimeout(fn, delay));
+      // p1: everything animates in
+      setTimeout(() => ov.classList.add('p1'), 100);
+      // p2: exit after hold
+      setTimeout(dismiss, 3200);
     })();
 
     // ========== NAVBAR ==========
