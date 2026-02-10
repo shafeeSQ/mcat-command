@@ -1042,7 +1042,7 @@
       text-align: center;
     }
 
-    /* Carousel track – slides horizontally */
+    /* Carousel – pixel-based sliding */
     .demo-carousel-area {
       position: relative;
       overflow: hidden;
@@ -1050,14 +1050,13 @@
     }
     .demo-track {
       display: flex;
-      flex-wrap: nowrap;
-      width: 700%;
       transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
       will-change: transform;
     }
     .demo-screen {
-      width: calc(100% / 7);
-      flex: none;
+      min-width: 100%;
+      max-width: 100%;
+      flex-shrink: 0;
       padding: 24px;
       min-height: 420px;
       box-sizing: border-box;
@@ -3442,8 +3441,12 @@
     // ========== DEMO SLIDING CAROUSEL ==========
     (function() {
       const track = document.getElementById('demoTrack');
-      const slides = track ? track.children : [];
+      if (!track) return;
+      const area = track.parentElement;
+      const slides = Array.from(track.children);
       const totalSlides = slides.length;
+      if (totalSlides === 0) return;
+
       const tabs = document.querySelectorAll('.demo-tab');
       const dots = document.querySelectorAll('.demo-dot-indicator');
       const prevBtn = document.getElementById('demoPrev');
@@ -3451,22 +3454,20 @@
       const wrapper = document.querySelector('.demo-screen-wrapper');
       let current = 0;
       let autoInterval = null;
-      let startX = 0;
-      let isDragging = false;
+      let touchStartX = 0;
 
-      if (!track || totalSlides === 0) return;
+      function getSlideWidth() {
+        return area.offsetWidth;
+      }
 
       function goTo(index, skipAuto) {
         if (index < 0) index = totalSlides - 1;
         if (index >= totalSlides) index = 0;
         current = index;
-        const pct = current * (100 / totalSlides);
-        track.style.transform = 'translateX(-' + pct + '%)';
-        // Update tabs
-        tabs.forEach((t, i) => t.classList.toggle('active', i === current));
-        // Update dots
-        dots.forEach((d, i) => d.classList.toggle('active', i === current));
-        // Update arrow visibility
+        var px = current * getSlideWidth();
+        track.style.transform = 'translateX(-' + px + 'px)';
+        tabs.forEach(function(t, i) { t.classList.toggle('active', i === current); });
+        dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
         if (prevBtn) prevBtn.style.opacity = current === 0 ? '0.3' : '1';
         if (nextBtn) nextBtn.style.opacity = current === totalSlides - 1 ? '0.3' : '1';
         if (!skipAuto) resetAuto();
@@ -3475,48 +3476,38 @@
       function next() { goTo(current + 1); }
       function prev() { goTo(current - 1); }
 
+      // Recalc on resize
+      window.addEventListener('resize', function() { goTo(current, true); });
+
       // Arrow buttons
       if (prevBtn) prevBtn.addEventListener('click', prev);
       if (nextBtn) nextBtn.addEventListener('click', next);
 
       // Tab clicks
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          const idx = parseInt(tab.dataset.tab, 10);
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          var idx = parseInt(tab.getAttribute('data-tab'), 10);
           if (!isNaN(idx)) goTo(idx);
         });
       });
 
       // Dot clicks
-      dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-          const idx = parseInt(dot.dataset.index, 10);
+      dots.forEach(function(dot) {
+        dot.addEventListener('click', function() {
+          var idx = parseInt(dot.getAttribute('data-index'), 10);
           if (!isNaN(idx)) goTo(idx);
         });
       });
 
-      // Keyboard arrows when wrapper is hovered/focused
-      document.addEventListener('keydown', (e) => {
-        if (!wrapper) return;
-        const rect = wrapper.getBoundingClientRect();
-        const inView = rect.top < window.innerHeight && rect.bottom > 0;
-        if (!inView) return;
-        if (e.key === 'ArrowLeft') { prev(); e.preventDefault(); }
-        if (e.key === 'ArrowRight') { next(); e.preventDefault(); }
-      });
-
-      // Touch/swipe support
+      // Touch/swipe
       if (wrapper) {
-        wrapper.addEventListener('touchstart', (e) => {
-          startX = e.touches[0].clientX;
-          isDragging = true;
+        wrapper.addEventListener('touchstart', function(e) {
+          touchStartX = e.touches[0].clientX;
           clearInterval(autoInterval);
         }, { passive: true });
 
-        wrapper.addEventListener('touchend', (e) => {
-          if (!isDragging) return;
-          isDragging = false;
-          const diff = startX - e.changedTouches[0].clientX;
+        wrapper.addEventListener('touchend', function(e) {
+          var diff = touchStartX - e.changedTouches[0].clientX;
           if (Math.abs(diff) > 50) {
             if (diff > 0) next(); else prev();
           } else {
@@ -3528,18 +3519,21 @@
       // Auto-rotation
       function resetAuto() {
         clearInterval(autoInterval);
-        autoInterval = setInterval(() => goTo(current + 1), 5000);
+        autoInterval = setInterval(function() { goTo(current + 1); }, 5000);
       }
 
       // Pause on hover
       if (wrapper) {
-        wrapper.addEventListener('mouseenter', () => clearInterval(autoInterval));
+        wrapper.addEventListener('mouseenter', function() { clearInterval(autoInterval); });
         wrapper.addEventListener('mouseleave', resetAuto);
       }
 
       // Init
       goTo(0, true);
       resetAuto();
+
+      // Debug log
+      console.log('[Carousel] initialized: ' + totalSlides + ' slides, area width: ' + getSlideWidth() + 'px');
     })();
 
     // ========== FAQ SMOOTH TOGGLE ==========
