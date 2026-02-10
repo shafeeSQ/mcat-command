@@ -1043,20 +1043,67 @@
       text-align: center;
     }
 
+    /* Carousel track */
+    .demo-track {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+
     .demo-screen {
-      display: none;
+      flex: 0 0 100%;
+      min-width: 100%;
       padding: 24px;
       min-height: 420px;
-      animation: demoFadeIn 0.4s ease;
     }
 
-    .demo-screen.active {
-      display: block;
+    /* Prev/Next arrows */
+    .demo-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
     }
+    .demo-nav:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.25);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .demo-nav-prev { left: 12px; }
+    .demo-nav-next { right: 12px; }
+    .demo-nav svg { width: 20px; height: 20px; }
 
-    @keyframes demoFadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Progress dots under carousel */
+    .demo-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 0 16px;
+    }
+    .demo-dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .demo-dot-indicator.active {
+      background: var(--accent-purple);
+      width: 24px;
+      border-radius: 4px;
     }
 
     /* Dashboard mock */
@@ -2133,13 +2180,13 @@
       </div>
 
       <div class="demo-tabs animate-on-scroll">
-        <button class="demo-tab active" onclick="showDemo('dashboard')">Dashboard</button>
-        <button class="demo-tab" onclick="showDemo('scores')">Score Tracker</button>
-        <button class="demo-tab" onclick="showDemo('content')">Content Mastery</button>
-        <button class="demo-tab" onclick="showDemo('log')">Study Log</button>
-        <button class="demo-tab" onclick="showDemo('resources')">Resources</button>
-        <button class="demo-tab" onclick="showDemo('journal')">Journal</button>
-        <button class="demo-tab" onclick="showDemo('guide')">Study Guide</button>
+        <button class="demo-tab active" data-tab="0">Dashboard</button>
+        <button class="demo-tab" data-tab="1">Score Tracker</button>
+        <button class="demo-tab" data-tab="2">Content Mastery</button>
+        <button class="demo-tab" data-tab="3">Study Log</button>
+        <button class="demo-tab" data-tab="4">Resources</button>
+        <button class="demo-tab" data-tab="5">Journal</button>
+        <button class="demo-tab" data-tab="6">Study Guide</button>
       </div>
 
       <div class="demo-screen-wrapper animate-on-scroll">
@@ -2150,8 +2197,18 @@
           <div class="demo-url">mcat-dashboard.html</div>
         </div>
 
+        <!-- Nav arrows -->
+        <button class="demo-nav demo-nav-prev" id="demoPrev" aria-label="Previous">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button class="demo-nav demo-nav-next" id="demoNext" aria-label="Next">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+        <div class="demo-track" id="demoTrack">
+
         <!-- Dashboard Screen -->
-        <div class="demo-screen active" id="demo-dashboard">
+        <div class="demo-screen" id="demo-dashboard">
           <div class="mock-stats">
             <div class="mock-stat">
               <div class="mock-stat-label">Days Until Test</div>
@@ -2559,7 +2616,18 @@
             </div>
           </div>
         </div>
+        </div><!-- /demo-track -->
 
+        <!-- Progress dots -->
+        <div class="demo-dots">
+          <span class="demo-dot-indicator active" data-index="0"></span>
+          <span class="demo-dot-indicator" data-index="1"></span>
+          <span class="demo-dot-indicator" data-index="2"></span>
+          <span class="demo-dot-indicator" data-index="3"></span>
+          <span class="demo-dot-indicator" data-index="4"></span>
+          <span class="demo-dot-indicator" data-index="5"></span>
+          <span class="demo-dot-indicator" data-index="6"></span>
+        </div>
       </div>
     </div>
   </section>
@@ -3356,54 +3424,107 @@
       }
     });
 
-    // ========== DEMO TAB SWITCHING ==========
-    function showDemo(tab) {
-      document.querySelectorAll('.demo-screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-      const screen = document.getElementById('demo-' + tab);
-      if (screen) {
-        screen.classList.add('active');
-        screen.style.animation = 'none';
-        screen.offsetHeight; // force reflow
-        screen.style.animation = 'demoFadeIn 0.4s ease';
+    // ========== DEMO SLIDING CAROUSEL ==========
+    (function() {
+      const track = document.getElementById('demoTrack');
+      const slides = track ? track.children : [];
+      const totalSlides = slides.length;
+      const tabs = document.querySelectorAll('.demo-tab');
+      const dots = document.querySelectorAll('.demo-dot-indicator');
+      const prevBtn = document.getElementById('demoPrev');
+      const nextBtn = document.getElementById('demoNext');
+      const wrapper = document.querySelector('.demo-screen-wrapper');
+      let current = 0;
+      let autoInterval = null;
+      let startX = 0;
+      let isDragging = false;
+
+      if (!track || totalSlides === 0) return;
+
+      function goTo(index, skipAuto) {
+        if (index < 0) index = totalSlides - 1;
+        if (index >= totalSlides) index = 0;
+        current = index;
+        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        // Update tabs
+        tabs.forEach((t, i) => t.classList.toggle('active', i === current));
+        // Update dots
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+        // Update arrow visibility
+        if (prevBtn) prevBtn.style.opacity = current === 0 ? '0.3' : '1';
+        if (nextBtn) nextBtn.style.opacity = current === totalSlides - 1 ? '0.3' : '1';
+        if (!skipAuto) resetAuto();
       }
-      event.currentTarget.classList.add('active');
-    }
 
-    // Auto-rotate demo tabs with crossfade
-    let demoInterval;
-    const demoTabs = ['dashboard', 'scores', 'content', 'log', 'resources', 'journal', 'guide'];
-    let demoIndex = 0;
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
 
-    function startDemoRotation() {
-      demoInterval = setInterval(() => {
-        demoIndex = (demoIndex + 1) % demoTabs.length;
-        document.querySelectorAll('.demo-screen').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-        const screen = document.getElementById('demo-' + demoTabs[demoIndex]);
-        if (screen) {
-          screen.classList.add('active');
-          screen.style.animation = 'none';
-          screen.offsetHeight;
-          screen.style.animation = 'demoFadeIn 0.4s ease';
-        }
-        document.querySelectorAll('.demo-tab')[demoIndex]?.classList.add('active');
-      }, 4000);
-    }
+      // Arrow buttons
+      if (prevBtn) prevBtn.addEventListener('click', prev);
+      if (nextBtn) nextBtn.addEventListener('click', next);
 
-    startDemoRotation();
-    const demoWrapper = document.querySelector('.demo-screen-wrapper');
-    if (demoWrapper) {
-      demoWrapper.addEventListener('mouseenter', () => clearInterval(demoInterval));
-      demoWrapper.addEventListener('mouseleave', startDemoRotation);
-    }
-
-    document.querySelectorAll('.demo-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        clearInterval(demoInterval);
-        demoIndex = demoTabs.indexOf(document.querySelector('.demo-screen.active')?.id.replace('demo-', ''));
+      // Tab clicks
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const idx = parseInt(tab.dataset.tab, 10);
+          if (!isNaN(idx)) goTo(idx);
+        });
       });
-    });
+
+      // Dot clicks
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          const idx = parseInt(dot.dataset.index, 10);
+          if (!isNaN(idx)) goTo(idx);
+        });
+      });
+
+      // Keyboard arrows when wrapper is hovered/focused
+      document.addEventListener('keydown', (e) => {
+        if (!wrapper) return;
+        const rect = wrapper.getBoundingClientRect();
+        const inView = rect.top < window.innerHeight && rect.bottom > 0;
+        if (!inView) return;
+        if (e.key === 'ArrowLeft') { prev(); e.preventDefault(); }
+        if (e.key === 'ArrowRight') { next(); e.preventDefault(); }
+      });
+
+      // Touch/swipe support
+      if (wrapper) {
+        wrapper.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          isDragging = true;
+          clearInterval(autoInterval);
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+          const diff = startX - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) next(); else prev();
+          } else {
+            resetAuto();
+          }
+        }, { passive: true });
+      }
+
+      // Auto-rotation
+      function resetAuto() {
+        clearInterval(autoInterval);
+        autoInterval = setInterval(() => goTo(current + 1), 5000);
+      }
+
+      // Pause on hover
+      if (wrapper) {
+        wrapper.addEventListener('mouseenter', () => clearInterval(autoInterval));
+        wrapper.addEventListener('mouseleave', resetAuto);
+      }
+
+      // Init
+      goTo(0, true);
+      resetAuto();
+    })();
 
     // ========== FAQ SMOOTH TOGGLE ==========
     document.querySelectorAll('.faq-trigger').forEach(trigger => {
