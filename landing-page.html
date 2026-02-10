@@ -186,10 +186,7 @@
       100% { transform: translateY(-100vh) translateX(50px) scale(0.5); opacity: 0; }
     }
 
-    @keyframes typing-cursor {
-      0%, 100% { border-color: var(--accent-purple); }
-      50% { border-color: transparent; }
-    }
+    /* typing-cursor removed — typing effect removed for perf */
 
     @keyframes count-up {
       from { opacity: 0; transform: translateY(10px); }
@@ -378,13 +375,7 @@
       margin-left: 8px;
     }
 
-    /* Typing effect — inline in hero paragraph */
-    .typing-text {
-      display: inline;
-      border-right: 3px solid var(--accent-purple);
-      animation: typing-cursor 1s infinite;
-      padding-right: 4px;
-    }
+    /* (typing effect removed — caused layout reflow jank) */
 
     /* Hero word animation */
     .hero-word {
@@ -2035,7 +2026,7 @@
           Built for serious MCAT prep
         </div>
         <h1><span class="hero-word" style="animation-delay:0.1s">Your</span> <span class="hero-word" style="animation-delay:0.15s">Path</span> <span class="hero-word" style="animation-delay:0.2s">to</span> <span class="hero-word gradient-text" style="animation-delay:0.3s">520+</span> <span class="hero-word" style="animation-delay:0.4s">Starts</span> <span class="hero-word" style="animation-delay:0.5s">Here</span></h1>
-        <p>The all-in-one MCAT study dashboard that <span class="typing-text" id="typingText">tracks your progress</span>. One file. Works offline. Yours forever.</p>
+        <p>The all-in-one MCAT study dashboard that tracks your progress, optimizes your prep, and keeps you motivated. One file. Works offline. Yours forever.</p>
         <div class="hero-cta">
           <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large btn-magnetic gumroad-link">
             Get Instant Access &mdash; $10
@@ -3221,29 +3212,20 @@
       scrollProgress.style.width = progress + '%';
     }
 
-    // ========== CURSOR GLOW ==========
+    // ========== CURSOR GLOW (only animates on mouse move) ==========
     const cursorGlow = document.getElementById('cursorGlow');
-    let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function animateGlow() {
-      glowX += (mouseX - glowX) * 0.08;
-      glowY += (mouseY - glowY) * 0.08;
-      cursorGlow.style.left = glowX + 'px';
-      cursorGlow.style.top = glowY + 'px';
-      requestAnimationFrame(animateGlow);
+    if (cursorGlow) {
+      document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+      }, { passive: true });
     }
-    animateGlow();
 
     // ========== FLOATING PARTICLES ==========
     const particlesContainer = document.getElementById('particles');
     function createParticles() {
       const colors = ['var(--accent-purple)', 'var(--accent-green)', 'var(--accent-blue)', 'var(--accent-cyan)'];
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 8; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.left = Math.random() * 100 + '%';
@@ -3310,46 +3292,6 @@
     const heroStats = document.querySelector('.hero-stats');
     if (heroStats) statsObserver.observe(heroStats);
 
-    // ========== TYPING EFFECT ==========
-    const typingPhrases = [
-      'tracks your progress',
-      'optimizes your prep',
-      'keeps you motivated',
-      'monitors your scores',
-      'builds study habits'
-    ];
-    let phraseIndex = 0;
-    let charIndex = typingPhrases[0].length;
-    let isDeleting = true;
-    const typingEl = document.getElementById('typingText');
-
-    function typeEffect() {
-      if (!typingEl) return;
-      const current = typingPhrases[phraseIndex];
-
-      if (isDeleting) {
-        charIndex--;
-        typingEl.textContent = current.substring(0, charIndex);
-      } else {
-        charIndex++;
-        typingEl.textContent = current.substring(0, charIndex);
-      }
-
-      let delay = isDeleting ? 40 : 80;
-
-      if (!isDeleting && charIndex === current.length) {
-        delay = 2000; // Pause at end
-        isDeleting = true;
-      } else if (isDeleting && charIndex === 0) {
-        isDeleting = false;
-        phraseIndex = (phraseIndex + 1) % typingPhrases.length;
-        delay = 400;
-      }
-
-      setTimeout(typeEffect, delay);
-    }
-    setTimeout(typeEffect, 2000);
-
     // ========== 3D TILT EFFECT ON CARDS ==========
     document.querySelectorAll('.tilt-card').forEach(card => {
       card.addEventListener('mousemove', (e) => {
@@ -3384,14 +3326,10 @@
 
     // ========== PARALLAX ON SCROLL ==========
     const parallaxEls = document.querySelectorAll('.parallax-slow');
-    const blobEls = document.querySelectorAll('.morph-blob');
     function handleParallax() {
       const scrollY = window.scrollY;
       parallaxEls.forEach(el => {
         el.style.transform = `translateY(${scrollY * 0.03}px) translateZ(0)`;
-      });
-      blobEls.forEach(el => {
-        el.style.translate = `0 ${scrollY * -0.05}px`;
       });
     }
 
