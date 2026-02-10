@@ -186,7 +186,24 @@
       100% { transform: translateY(-100vh) translateX(50px) scale(0.5); opacity: 0; }
     }
 
-    /* typing-cursor removed — typing effect removed for perf */
+    @keyframes typing-cursor {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Orbit ring around hero mockup */
+    @keyframes orbit {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes orbit-reverse {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+    @keyframes orbit-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
 
     @keyframes count-up {
       from { opacity: 0; transform: translateY(10px); }
@@ -236,6 +253,67 @@
     .slide-left { opacity: 0; transform: translateX(-60px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
     .slide-right { opacity: 0; transform: translateX(60px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
     .slide-left.visible, .slide-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* ========== ORBIT RING ========== */
+    .hero-orbit-container {
+      position: absolute;
+      inset: -60px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-orbit-ring {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(139,92,246,0.08);
+      border-radius: 50%;
+      animation: orbit 20s linear infinite;
+    }
+    .hero-orbit-ring:nth-child(2) {
+      inset: -30px;
+      border-color: rgba(8,145,178,0.06);
+      animation: orbit-reverse 25s linear infinite;
+    }
+    .hero-orbit-ring:nth-child(3) {
+      inset: -60px;
+      border-color: rgba(34,197,94,0.05);
+      animation: orbit 30s linear infinite;
+    }
+    .orbit-node {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      animation: orbit-pulse 3s ease-in-out infinite;
+    }
+    .orbit-node-1 { top: 0; left: 50%; transform: translateX(-50%); background: var(--accent-purple); box-shadow: 0 0 12px rgba(139,92,246,0.6); }
+    .orbit-node-2 { bottom: 20%; right: 0; background: var(--accent-cyan); box-shadow: 0 0 12px rgba(8,145,178,0.6); animation-delay: 1s; }
+    .orbit-node-3 { top: 30%; left: 0; background: var(--accent-green); box-shadow: 0 0 12px rgba(34,197,94,0.6); animation-delay: 2s; }
+    .orbit-node:nth-child(2n) .orbit-node { width: 6px; height: 6px; }
+
+    /* ========== TYPING LINE ========== */
+    .typing-line {
+      display: inline;
+    }
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--accent-purple);
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: typing-cursor 0.8s step-end infinite;
+    }
+
+    /* ========== ENHANCED SECTION REVEALS ========== */
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.92);
+      transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
 
     /* Scroll progress bar */
     .scroll-progress {
@@ -2097,7 +2175,7 @@
           Built for serious MCAT prep
         </div>
         <h1><span class="hero-word" style="animation-delay:0.1s">Your</span> <span class="hero-word" style="animation-delay:0.15s">Path</span> <span class="hero-word" style="animation-delay:0.2s">to</span> <span class="hero-word gradient-text" style="animation-delay:0.3s">520+</span> <span class="hero-word" style="animation-delay:0.4s">Starts</span> <span class="hero-word" style="animation-delay:0.5s">Here</span></h1>
-        <p>The all-in-one MCAT study dashboard that tracks your progress, optimizes your prep, and keeps you motivated. One file. Works offline. Yours forever.</p>
+        <p>The all-in-one MCAT study dashboard that <span class="typing-line" id="typingText">tracks your progress</span><span class="typing-cursor"></span>. One file. Works offline. Yours forever.</p>
         <div class="hero-cta">
           <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large btn-magnetic gumroad-link">
             Get Instant Access &mdash; $10
@@ -2122,6 +2200,17 @@
       </div>
 
       <div class="hero-visual parallax-slow">
+        <!-- Orbiting rings -->
+        <div class="hero-orbit-container">
+          <div class="hero-orbit-ring">
+            <div class="orbit-node orbit-node-1"></div>
+            <div class="orbit-node orbit-node-2"></div>
+          </div>
+          <div class="hero-orbit-ring">
+            <div class="orbit-node orbit-node-3"></div>
+          </div>
+          <div class="hero-orbit-ring"></div>
+        </div>
         <div class="hero-mockup" style="animation: float 6s ease-in-out infinite, glow-pulse 4s ease-in-out infinite;">
           <div class="mockup-header">
             <div class="mockup-dot red"></div>
@@ -2671,6 +2760,7 @@
       </div>
     </div>
   </section>
+
 
   <!-- Features -->
   <section class="features" id="features">
@@ -3336,6 +3426,49 @@
       }, { passive: true });
     }
 
+    // ========== TYPING EFFECT (no layout shift) ==========
+    (function() {
+      var el = document.getElementById('typingText');
+      if (!el) return;
+      var phrases = [
+        'tracks your progress',
+        'optimizes your prep',
+        'keeps you motivated',
+        'masters AAMC content',
+        'boosts your score'
+      ];
+      var phraseIdx = 0;
+      var charIdx = phrases[0].length;
+      var isDeleting = true;
+      var speed = 50;
+
+      function tick() {
+        var current = phrases[phraseIdx];
+        if (isDeleting) {
+          charIdx--;
+          el.textContent = current.substring(0, charIdx);
+          if (charIdx === 0) {
+            isDeleting = false;
+            phraseIdx = (phraseIdx + 1) % phrases.length;
+            setTimeout(tick, 400);
+            return;
+          }
+          setTimeout(tick, 30);
+        } else {
+          charIdx++;
+          el.textContent = phrases[phraseIdx].substring(0, charIdx);
+          if (charIdx === phrases[phraseIdx].length) {
+            isDeleting = true;
+            setTimeout(tick, 2000);
+            return;
+          }
+          setTimeout(tick, speed);
+        }
+      }
+      setTimeout(tick, 2500);
+    })();
+
+
     // ========== FLOATING PARTICLES ==========
     const particlesContainer = document.getElementById('particles');
     function createParticles() {
@@ -3363,7 +3496,7 @@
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    document.querySelectorAll('.animate-on-scroll, .slide-left, .slide-right').forEach(el => observer.observe(el));
+    document.querySelectorAll('.animate-on-scroll, .slide-left, .slide-right, .reveal-scale').forEach(el => observer.observe(el));
 
     // ========== SMOOTH SCROLL ==========
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
