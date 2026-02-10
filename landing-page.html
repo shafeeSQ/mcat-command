@@ -136,15 +136,302 @@
       100% { background-position: 200% center; }
     }
 
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes morph {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      50% { border-radius: 50% 60% 30% 60% / 30% 40% 70% 60%; }
+      75% { border-radius: 60% 30% 60% 40% / 70% 50% 40% 60%; }
+    }
+
+    @keyframes text-reveal {
+      from { clip-path: inset(0 100% 0 0); opacity: 0; }
+      to { clip-path: inset(0 0 0 0); opacity: 1; }
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% { filter: drop-shadow(0 0 20px rgba(8,145,178,0.3)); }
+      50% { filter: drop-shadow(0 0 40px rgba(8,145,178,0.6)); }
+    }
+
+    @keyframes slide-in-left {
+      from { opacity: 0; transform: translateX(-60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slide-in-right {
+      from { opacity: 0; transform: translateX(60px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes bounce-soft {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes particle-float {
+      0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) translateX(50px) scale(0.5); opacity: 0; }
+    }
+
+    @keyframes typing-cursor {
+      0%, 100% { border-color: var(--accent-purple); }
+      50% { border-color: transparent; }
+    }
+
+    @keyframes count-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes border-dance {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 300% 0%; }
+    }
+
+    @keyframes card-shine {
+      0% { left: -100%; }
+      100% { left: 200%; }
+    }
+
     .animate-on-scroll {
       opacity: 0;
       transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .animate-on-scroll.visible {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    /* Staggered children animation */
+    .stagger-children.visible > * {
+      animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .stagger-children.visible > *:nth-child(1) { animation-delay: 0.05s; }
+    .stagger-children.visible > *:nth-child(2) { animation-delay: 0.1s; }
+    .stagger-children.visible > *:nth-child(3) { animation-delay: 0.15s; }
+    .stagger-children.visible > *:nth-child(4) { animation-delay: 0.2s; }
+    .stagger-children.visible > *:nth-child(5) { animation-delay: 0.25s; }
+    .stagger-children.visible > *:nth-child(6) { animation-delay: 0.3s; }
+    .stagger-children.visible > *:nth-child(7) { animation-delay: 0.35s; }
+    .stagger-children.visible > *:nth-child(8) { animation-delay: 0.4s; }
+    .stagger-children.visible > *:nth-child(9) { animation-delay: 0.45s; }
+
+    .stagger-children > * {
+      opacity: 0;
+    }
+
+    /* Slide animations */
+    .slide-left { opacity: 0; transform: translateX(-60px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    .slide-right { opacity: 0; transform: translateX(60px); transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    .slide-left.visible, .slide-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--gradient-1);
+      z-index: 9999;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(8,145,178,0.5);
+    }
+
+    /* Cursor glow follower */
+    .cursor-glow {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(8,145,178,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s;
+      will-change: left, top;
+    }
+
+    /* Floating particles */
+    .particles-container {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -10px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent-purple);
+      opacity: 0;
+      animation: particle-float linear infinite;
+    }
+
+    /* Morphing blob */
+    .morph-blob {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, rgba(8,145,178,0.12), rgba(34,197,94,0.08));
+      animation: morph 15s ease-in-out infinite, rotate-slow 25s linear infinite;
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Magnetic button effect */
+    .btn-magnetic {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-magnetic::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-magnetic:hover::after { opacity: 1; }
+
+    /* Card shine effect on hover */
+    .card-shine {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-shine::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+      transition: none;
+    }
+
+    .card-shine:hover::after {
+      animation: card-shine 0.8s ease forwards;
+    }
+
+    /* 3D tilt on hover */
+    .tilt-card {
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    /* Sticky CTA bar */
+    .sticky-cta {
+      position: fixed;
+      bottom: -80px;
+      left: 0;
+      right: 0;
+      z-index: 998;
+      padding: 16px 0;
+      background: rgba(10, 11, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      transition: bottom 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+    }
+
+    .sticky-cta.visible { bottom: 0; }
+
+    .sticky-cta .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sticky-cta-text {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .sticky-cta-price {
+      color: var(--accent-green);
+      font-weight: 800;
+      margin-left: 8px;
+    }
+
+    /* Typing effect */
+    .typing-text {
+      display: inline;
+      border-right: 3px solid var(--accent-purple);
+      animation: typing-cursor 1s infinite;
+      padding-right: 4px;
+    }
+
+    /* Hero word animation */
+    .hero-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Gradient border animation */
+    .gradient-border {
+      position: relative;
+    }
+
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      padding: 2px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-green), var(--accent-blue), var(--accent-purple));
+      background-size: 300% 300%;
+      animation: border-dance 4s linear infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .gradient-border:hover::before { opacity: 1; }
+
+    /* Parallax layers */
+    .parallax-slow { will-change: transform; }
+    .parallax-medium { will-change: transform; }
+    .parallax-fast { will-change: transform; }
+
+    @media (max-width: 768px) {
+      .cursor-glow, .particles-container { display: none; }
+      .sticky-cta .container { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor-glow, .particles-container, .morph-blob { display: none !important; }
+      .scroll-progress { display: none; }
+      .stagger-children > * { opacity: 1 !important; animation: none !important; }
+      .hero-word { opacity: 1 !important; transform: none !important; animation: none !important; }
     }
 
     /* ========== BACKGROUND EFFECTS ========== */
@@ -1478,6 +1765,15 @@
   </style>
 </head>
 <body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- Cursor Glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Floating Particles -->
+  <div class="particles-container" id="particles"></div>
+
   <!-- Background Effects -->
   <div class="bg-grid"></div>
   <div class="bg-glow bg-glow-1"></div>
@@ -1515,21 +1811,22 @@
   </nav>
 
   <!-- Hero -->
-  <section class="hero">
+  <section class="hero" id="hero">
+    <div class="morph-blob" style="top:-150px;right:-150px;"></div>
     <div class="container">
       <div class="hero-content">
         <div class="hero-badge">
           <span class="dot"></span>
           Built for serious MCAT prep
         </div>
-        <h1>Your Path to <span class="gradient-text">520+</span> Starts Here</h1>
-        <p>The all-in-one MCAT study dashboard that tracks your progress, optimizes your prep, and keeps you motivated. One file. Works offline. Yours forever.</p>
+        <h1><span class="hero-word" style="animation-delay:0.1s">Your</span> <span class="hero-word" style="animation-delay:0.15s">Path</span> <span class="hero-word" style="animation-delay:0.2s">to</span> <span class="hero-word gradient-text" style="animation-delay:0.3s">520+</span> <span class="hero-word" style="animation-delay:0.4s">Starts</span> <span class="hero-word" style="animation-delay:0.5s">Here</span></h1>
+        <p>The all-in-one MCAT study dashboard that <span class="typing-text" id="typingText">tracks your progress</span>. One file. Works offline. Yours forever.</p>
         <div class="hero-cta">
-          <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large gumroad-link">
+          <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large btn-magnetic gumroad-link">
             Get Instant Access &mdash; $10
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
-          <a href="#demo" class="btn btn-secondary btn-large">See It In Action</a>
+          <a href="#demo" class="btn btn-secondary btn-large btn-magnetic">See It In Action</a>
         </div>
         <div class="hero-stats">
           <div class="hero-stat">
@@ -1547,8 +1844,8 @@
         </div>
       </div>
 
-      <div class="hero-visual">
-        <div class="hero-mockup">
+      <div class="hero-visual parallax-slow">
+        <div class="hero-mockup" style="animation: float 6s ease-in-out infinite, glow-pulse 4s ease-in-out infinite;">
           <div class="mockup-header">
             <div class="mockup-dot red"></div>
             <div class="mockup-dot yellow"></div>
@@ -2070,56 +2367,56 @@
         <p class="section-desc">A comprehensive dashboard designed specifically for MCAT prep. No bloated apps. No monthly fees. Just results.</p>
       </div>
 
-      <div class="features-grid">
-        <div class="feature-card animate-on-scroll">
+      <div class="features-grid stagger-children animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon blue">&#128202;</div>
           <h3 class="feature-title">Smart Analytics</h3>
           <p class="feature-desc">Track study hours, practice test scores, and progress across all 4 sections with beautiful visualizations and insights.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon purple">&#128218;</div>
           <h3 class="feature-title">AAMC Content Outline</h3>
           <p class="feature-desc">The official AAMC content outline with 300+ topics organized by Foundational Concepts. Track mastery for each topic from 0 to 100%.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon green">&#127918;</div>
           <h3 class="feature-title">Gamification & XP</h3>
           <p class="feature-desc">Earn XP for studying, level up through 10 ranks, and unlock 12 achievements. Stay motivated with daily streaks and confetti celebrations.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon amber">&#9201;</div>
           <h3 class="feature-title">Pomodoro Timer</h3>
           <p class="feature-desc">Built-in focus timer with customizable sessions and category tracking. Log your time automatically as you study.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon cyan">&#128203;</div>
           <h3 class="feature-title">Resource Tracker</h3>
           <p class="feature-desc">Track all your resources in one place: books, question banks, Anki decks, video courses, and full-length exams with smart progress tracking.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon pink">&#128293;</div>
           <h3 class="feature-title">Score & Streak Tracking</h3>
           <p class="feature-desc">Log practice tests with section-by-section breakdowns. See your score progression over time. Maintain daily study streaks.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon purple">&#127991;</div>
           <h3 class="feature-title">Topic Tagging</h3>
           <p class="feature-desc">Tag study sessions with specific MCAT topics from the AAMC outline. Auto-bumps mastery when you log. High-yield and low-yield badges built in.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon green">&#128221;</div>
           <h3 class="feature-title">Study Journal</h3>
           <p class="feature-desc">Write about your prep journey, vent about hard days, and track your mindset. Auto-saves as you type. A private space to decompress.</p>
         </div>
 
-        <div class="feature-card animate-on-scroll">
+        <div class="feature-card card-shine tilt-card gradient-border">
           <div class="feature-icon blue">&#128218;</div>
           <h3 class="feature-title">Built-in Study Guide</h3>
           <p class="feature-desc">33 articles covering everything: study materials, section strategies, practice test advice, schedules, test day tips, mental health, and FAQs.</p>
@@ -2137,18 +2434,18 @@
         <p class="section-desc">No accounts, no setup, no internet required after download.</p>
       </div>
 
-      <div class="steps-grid">
-        <div class="step-card animate-on-scroll">
+      <div class="steps-grid stagger-children animate-on-scroll">
+        <div class="step-card">
           <div class="step-number">1</div>
           <h3 class="step-title">Buy & Download</h3>
           <p class="step-desc">Pay once ($10) and instantly download a single HTML file. No signup needed.</p>
         </div>
-        <div class="step-card animate-on-scroll">
+        <div class="step-card">
           <div class="step-number">2</div>
           <h3 class="step-title">Open in Browser</h3>
           <p class="step-desc">Double-click the file to open it in Chrome, Edge, or any modern browser. That's it.</p>
         </div>
-        <div class="step-card animate-on-scroll">
+        <div class="step-card">
           <div class="step-number">3</div>
           <h3 class="step-title">Track Everything</h3>
           <p class="step-desc">Set your test date, start logging study sessions, and watch your progress grow. All data stays on your computer.</p>
@@ -2161,7 +2458,7 @@
   <section class="showcase">
     <div class="container">
       <div class="showcase-content">
-        <div class="showcase-text animate-on-scroll">
+        <div class="showcase-text slide-left animate-on-scroll">
           <h2>Track Every <span class="gradient-text">Foundational Concept</span></h2>
           <p>The complete AAMC content outline built right in. Track mastery for each topic and see exactly where you need to focus.</p>
           <div class="showcase-features">
@@ -2195,7 +2492,7 @@
             </div>
           </div>
         </div>
-        <div class="showcase-visual animate-on-scroll">
+        <div class="showcase-visual slide-right animate-on-scroll">
           <div class="showcase-image" style="padding: 24px;">
             <div style="background: var(--bg-elevated); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -2337,8 +2634,8 @@
         <p class="section-desc">Early feedback from pre-meds using Command Center for their prep.</p>
       </div>
 
-      <div class="testimonials-grid">
-        <div class="testimonial-card animate-on-scroll">
+      <div class="testimonials-grid stagger-children animate-on-scroll">
+        <div class="testimonial-card card-shine gradient-border">
           <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
           <p class="testimonial-text">"I was using like 4 different spreadsheets to track everything before this. Having the AAMC outline built in with the mastery tracking saved me so much setup time. Actually worth it."</p>
           <div class="testimonial-author">
@@ -2350,7 +2647,7 @@
           </div>
         </div>
 
-        <div class="testimonial-card animate-on-scroll">
+        <div class="testimonial-card card-shine gradient-border">
           <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
           <p class="testimonial-text">"The streak tracker and XP system honestly kept me going during weeks where I wanted to quit. It sounds dumb but seeing that number go up every day made me not want to break the chain."</p>
           <div class="testimonial-author">
@@ -2362,7 +2659,7 @@
           </div>
         </div>
 
-        <div class="testimonial-card animate-on-scroll">
+        <div class="testimonial-card card-shine gradient-border">
           <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
           <p class="testimonial-text">"Love that it's just one HTML file and works offline. I don't have great wifi at home so having everything local was a huge plus. The score tracking is clean too."</p>
           <div class="testimonial-author">
@@ -2386,7 +2683,7 @@
         <p class="section-desc">No subscriptions. No hidden fees. Pay once, use forever.</p>
       </div>
 
-      <div class="pricing-card animate-on-scroll">
+      <div class="pricing-card animate-on-scroll" style="animation: glow-pulse 3s ease-in-out infinite;">
         <div class="pricing-badge">Best Value</div>
         <h3 class="pricing-title">MCAT Command Center</h3>
         <p class="pricing-subtitle">Complete MCAT Study Dashboard</p>
@@ -2567,6 +2864,20 @@
     </div>
   </section>
 
+  <!-- Sticky CTA Bar -->
+  <div class="sticky-cta" id="stickyCta">
+    <div class="container">
+      <div>
+        <span class="sticky-cta-text">Ready to ace the MCAT?</span>
+        <span class="sticky-cta-price">Just $10</span>
+      </div>
+      <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-magnetic gumroad-link" style="padding:12px 24px;font-size:14px;">
+        Get Instant Access
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
@@ -2580,13 +2891,59 @@
   </footer>
 
   <script>
-    // Navbar scroll effect
+    // ========== NAVBAR SCROLL ==========
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 50);
     });
 
-    // Animate on scroll
+    // ========== SCROLL PROGRESS BAR ==========
+    const scrollProgress = document.getElementById('scrollProgress');
+    function updateScrollProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      scrollProgress.style.width = progress + '%';
+    }
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+    // ========== CURSOR GLOW ==========
+    const cursorGlow = document.getElementById('cursorGlow');
+    let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animateGlow() {
+      glowX += (mouseX - glowX) * 0.08;
+      glowY += (mouseY - glowY) * 0.08;
+      cursorGlow.style.left = glowX + 'px';
+      cursorGlow.style.top = glowY + 'px';
+      requestAnimationFrame(animateGlow);
+    }
+    animateGlow();
+
+    // ========== FLOATING PARTICLES ==========
+    const particlesContainer = document.getElementById('particles');
+    function createParticles() {
+      const colors = ['var(--accent-purple)', 'var(--accent-green)', 'var(--accent-blue)', 'var(--accent-cyan)'];
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+        particle.style.animationDelay = (Math.random() * 10) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+    if (window.innerWidth > 768) createParticles();
+
+    // ========== ANIMATE ON SCROLL (enhanced) ==========
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -2595,9 +2952,9 @@
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    document.querySelectorAll('.animate-on-scroll, .slide-left, .slide-right').forEach(el => observer.observe(el));
 
-    // Smooth scroll for anchor links
+    // ========== SMOOTH SCROLL ==========
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         e.preventDefault();
@@ -2606,13 +2963,14 @@
       });
     });
 
-    // Animated counter for hero stats
+    // ========== ANIMATED COUNTERS ==========
     function animateValue(el, start, end, duration) {
       let startTs = null;
       const step = (ts) => {
         if (!startTs) startTs = ts;
         const progress = Math.min((ts - startTs) / duration, 1);
-        el.textContent = Math.floor(progress * (end - start) + start).toLocaleString() + (el.dataset.suffix || '');
+        const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        el.textContent = Math.floor(eased * (end - start) + start).toLocaleString() + (el.dataset.suffix || '');
         if (progress < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
@@ -2638,22 +2996,129 @@
     const heroStats = document.querySelector('.hero-stats');
     if (heroStats) statsObserver.observe(heroStats);
 
-    // Close mobile menu on escape key
+    // ========== TYPING EFFECT ==========
+    const typingPhrases = [
+      'tracks your progress',
+      'optimizes your prep',
+      'keeps you motivated',
+      'monitors your scores',
+      'builds study habits'
+    ];
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typingEl = document.getElementById('typingText');
+
+    function typeEffect() {
+      if (!typingEl) return;
+      const current = typingPhrases[phraseIndex];
+
+      if (isDeleting) {
+        charIndex--;
+        typingEl.textContent = current.substring(0, charIndex);
+      } else {
+        charIndex++;
+        typingEl.textContent = current.substring(0, charIndex);
+      }
+
+      let delay = isDeleting ? 40 : 80;
+
+      if (!isDeleting && charIndex === current.length) {
+        delay = 2000; // Pause at end
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % typingPhrases.length;
+        delay = 400;
+      }
+
+      setTimeout(typeEffect, delay);
+    }
+    setTimeout(typeEffect, 2000);
+
+    // ========== 3D TILT EFFECT ON CARDS ==========
+    document.querySelectorAll('.tilt-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = (y - centerY) / centerY * -6;
+        const rotateY = (x - centerX) / centerX * 6;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+      });
+    });
+
+    // ========== MAGNETIC BUTTON EFFECT ==========
+    document.querySelectorAll('.btn-magnetic').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        btn.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px)`;
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translate(0, 0)';
+      });
+    });
+
+    // ========== PARALLAX ON SCROLL ==========
+    function handleParallax() {
+      const scrollY = window.scrollY;
+      document.querySelectorAll('.parallax-slow').forEach(el => {
+        el.style.transform = `translateY(${scrollY * 0.03}px)`;
+      });
+      document.querySelectorAll('.morph-blob').forEach(el => {
+        el.style.transform += ` translateY(${scrollY * -0.05}px)`;
+      });
+    }
+    window.addEventListener('scroll', handleParallax, { passive: true });
+
+    // ========== STICKY CTA BAR ==========
+    const stickyCta = document.getElementById('stickyCta');
+    const heroSection = document.getElementById('hero');
+    const ctaSection = document.querySelector('.cta');
+
+    function updateStickyCta() {
+      const heroBottom = heroSection ? heroSection.getBoundingClientRect().bottom : 0;
+      const ctaTop = ctaSection ? ctaSection.getBoundingClientRect().top : Infinity;
+
+      if (heroBottom < -200 && ctaTop > window.innerHeight) {
+        stickyCta.classList.add('visible');
+      } else {
+        stickyCta.classList.remove('visible');
+      }
+    }
+    window.addEventListener('scroll', updateStickyCta, { passive: true });
+
+    // ========== MOBILE MENU ==========
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         document.getElementById('mobileMenu').classList.remove('open');
       }
     });
 
-    // Demo tab switching
+    // ========== DEMO TAB SWITCHING ==========
     function showDemo(tab) {
       document.querySelectorAll('.demo-screen').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById('demo-' + tab).classList.add('active');
+      const screen = document.getElementById('demo-' + tab);
+      if (screen) {
+        screen.classList.add('active');
+        screen.style.animation = 'none';
+        screen.offsetHeight; // force reflow
+        screen.style.animation = 'demoFadeIn 0.4s ease';
+      }
       event.currentTarget.classList.add('active');
     }
 
-    // Auto-rotate demo tabs
+    // Auto-rotate demo tabs with crossfade
     let demoInterval;
     const demoTabs = ['dashboard', 'scores', 'content', 'log', 'resources', 'journal', 'guide'];
     let demoIndex = 0;
@@ -2663,12 +3128,17 @@
         demoIndex = (demoIndex + 1) % demoTabs.length;
         document.querySelectorAll('.demo-screen').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById('demo-' + demoTabs[demoIndex]).classList.add('active');
-        document.querySelectorAll('.demo-tab')[demoIndex].classList.add('active');
+        const screen = document.getElementById('demo-' + demoTabs[demoIndex]);
+        if (screen) {
+          screen.classList.add('active');
+          screen.style.animation = 'none';
+          screen.offsetHeight;
+          screen.style.animation = 'demoFadeIn 0.4s ease';
+        }
+        document.querySelectorAll('.demo-tab')[demoIndex]?.classList.add('active');
       }, 4000);
     }
 
-    // Start rotation, pause on hover
     startDemoRotation();
     const demoWrapper = document.querySelector('.demo-screen-wrapper');
     if (demoWrapper) {
@@ -2676,13 +3146,40 @@
       demoWrapper.addEventListener('mouseleave', startDemoRotation);
     }
 
-    // Pause rotation on manual tab click
     document.querySelectorAll('.demo-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         clearInterval(demoInterval);
         demoIndex = demoTabs.indexOf(document.querySelector('.demo-screen.active')?.id.replace('demo-', ''));
       });
     });
+
+    // ========== FAQ SMOOTH TOGGLE ==========
+    document.querySelectorAll('.faq-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const item = trigger.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+
+    // ========== PERFORMANCE: throttle scroll handlers ==========
+    let ticking = false;
+    const scrollHandlers = [updateScrollProgress, handleParallax, updateStickyCta];
+
+    window.removeEventListener('scroll', updateScrollProgress);
+    window.removeEventListener('scroll', handleParallax);
+    window.removeEventListener('scroll', updateStickyCta);
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          scrollHandlers.forEach(fn => fn());
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
   </script>
 </body>
 </html>

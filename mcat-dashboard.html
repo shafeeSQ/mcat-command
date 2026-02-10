@@ -4061,9 +4061,9 @@
       if (e.key === 'f' || e.key === 'F') { state.focusMode ? exitFocusMode() : enterFocusMode(); return; }
       if (e.key === ' ') { e.preventDefault(); state.timerRunning ? pauseTimer() : startTimer(); return; }
 
-      const tabs = ['dashboard', 'study', 'scores', 'content', 'resources', 'guide', 'timer'];
+      const tabs = ['dashboard', 'study', 'journal', 'scores', 'content', 'resources', 'guide', 'timer'];
       const num = parseInt(e.key);
-      if (num >= 1 && num <= 7) {
+      if (num >= 1 && num <= 8) {
         state.tab = tabs[num - 1];
         render();
       }
@@ -4455,6 +4455,7 @@
       const tabs = [
         {id:'dashboard', icon:icon.home, label:'Dashboard'},
         {id:'study', icon:icon.book, label:'Study Log'},
+        {id:'journal', icon:icon.edit, label:'Journal'},
         {id:'scores', icon:icon.chart, label:'Scores'},
         {id:'content', icon:icon.grid, label:'Content'},
         {id:'resources', icon:icon.folder, label:'Resources'},
@@ -4552,6 +4553,7 @@
       const renderTabContent = () => {
         if(state.tab==='dashboard') renderDash(m);
         else if(state.tab==='study') renderStudy(m);
+        else if(state.tab==='journal') renderJournal(m);
         else if(state.tab==='scores') renderScores(m);
         else if(state.tab==='content') renderContent(m);
         else if(state.tab==='resources') renderResources(m);
@@ -4909,36 +4911,26 @@
             </div>
           </div>
 
-          <!-- Journal -->
-          <div class="card p-6 mb-8 reveal" style="border-left:3px solid var(--focus)">
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="font-semibold flex items-center gap-2">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--focus)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                Journal
-              </h2>
-              <span class="text-xs text-[var(--text-muted)]">${state.journal.length} entries</span>
-            </div>
-            <textarea id="journal-input" placeholder="How are you feeling about your prep today? Write anything on your mind..." rows="3" class="input w-full text-sm mb-3 resize-none" style="background:var(--surface-2);border-color:var(--border-subtle);line-height:1.6" onblur="autoSaveJournal()">${(() => {
-              const todayEntry = state.journal.find(j => j.date === today());
-              return todayEntry ? todayEntry.text : '';
-            })()}</textarea>
-            <div class="flex items-center justify-between mb-4">
-              <button onclick="addJournalEntry()" class="btn btn-primary text-sm px-4 py-1.5">${icon.plus} Save Entry</button>
-              <span class="text-xs text-[var(--text-muted)]" id="journal-save-status"></span>
-            </div>
-            ${state.journal.length ? `
-              <div class="space-y-3 max-h-[300px] overflow-y-auto" style="scrollbar-width:thin">
-                ${state.journal.slice().reverse().slice(0, 10).map((j, idx) => `
-                  <div class="p-3 rounded-xl transition-colors hover:bg-[var(--surface-3)]" style="background:var(--surface-2)">
-                    <div class="flex justify-between items-start mb-1">
-                      <span class="text-xs font-medium text-[var(--text-muted)]">${formatDate(j.date)}${j.date === today() ? ' <span style="color:var(--focus)">Today</span>' : ''}</span>
-                      <button onclick="deleteJournalEntry(${j.id})" class="delete-btn text-[var(--text-muted)] opacity-0 group-hover:opacity-100" style="font-size:12px" title="Delete">${icon.trash}</button>
-                    </div>
-                    <p class="text-sm text-[var(--text-secondary)] leading-relaxed journal-text" onclick="this.classList.toggle('line-clamp-2')" style="cursor:pointer">${j.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</p>
-                  </div>
-                `).join('')}
+          <!-- Journal Widget -->
+          <div class="card p-5 mb-8 reveal cursor-pointer hover-lift" onclick="state.tab='journal';render()" style="border-left:3px solid var(--focus)">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(8,145,178,0.15);color:var(--focus)">
+                ${icon.edit}
               </div>
-            ` : `<div class="text-center py-4 text-sm text-[var(--text-muted)]">No entries yet. Start writing about your study journey!</div>`}
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <span class="text-sm font-semibold">Today's Journal</span>
+                  <span class="text-xs text-[var(--text-muted)]">${state.journal.length} entries total</span>
+                </div>
+                ${(() => {
+                  const todayEntry = state.journal.find(j => j.date === today());
+                  return todayEntry
+                    ? `<p class="text-xs text-[var(--text-secondary)] truncate">${todayEntry.text.replace(/</g,'&lt;').substring(0, 80)}${todayEntry.text.length > 80 ? '...' : ''}</p>`
+                    : `<p class="text-xs text-[var(--text-muted)]">Write something about your prep today...</p>`;
+                })()}
+              </div>
+              <span class="text-[var(--text-muted)]">${icon.arrow}</span>
+            </div>
           </div>
 
           <!-- Motivational Quote -->
@@ -4950,7 +4942,179 @@
       `;
     }
 
-    // ===== JOURNAL =====
+    // ===== JOURNAL TAB =====
+    function renderJournal(el) {
+      const journalQuote = getSmartQuote('motivation');
+      const todayEntry = state.journal.find(j => j.date === today());
+      const entriesThisWeek = state.journal.filter(j => new Date(j.date+'T00:00:00') > new Date(Date.now() - 7*86400000)).length;
+
+      // Calculate writing streak
+      let writeStreak = 0;
+      const sortedDates = [...new Set(state.journal.map(j => j.date))].sort().reverse();
+      if (sortedDates.length) {
+        const d = new Date();
+        for (let i = 0; i < 365; i++) {
+          const ds = d.toISOString().split('T')[0];
+          if (sortedDates.includes(ds)) { writeStreak++; d.setDate(d.getDate()-1); }
+          else if (i === 0) { d.setDate(d.getDate()-1); continue; } // grace for today
+          else break;
+        }
+      }
+
+      // Group entries by month
+      const grouped = {};
+      state.journal.slice().reverse().forEach(j => {
+        const d = new Date(j.date + 'T00:00:00');
+        const key = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(j);
+      });
+
+      el.innerHTML = `
+        <div class="p-8 max-w-3xl mx-auto animate-in">
+          <div class="flex justify-between items-start mb-8">
+            <div>
+              <h1 class="text-2xl font-bold mb-1">Journal</h1>
+              <p class="text-[var(--text-muted)]">A private space to reflect on your MCAT journey</p>
+            </div>
+            <div class="flex gap-4 text-center">
+              <div>
+                <div class="text-lg font-bold text-[var(--focus)]">${state.journal.length}</div>
+                <div class="text-xs text-[var(--text-muted)]">Entries</div>
+              </div>
+              <div>
+                <div class="text-lg font-bold text-[var(--growth)]">${writeStreak}</div>
+                <div class="text-xs text-[var(--text-muted)]">Day Streak</div>
+              </div>
+              <div>
+                <div class="text-lg font-bold text-[var(--wisdom)]">${entriesThisWeek}</div>
+                <div class="text-xs text-[var(--text-muted)]">This Week</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Today's Entry -->
+          <div class="card p-6 mb-8" style="border-left:3px solid var(--focus)">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-sm font-semibold">${todayEntry ? "Today's Entry" : "What's on your mind?"}</span>
+              <span class="text-xs px-2 py-0.5 rounded-full" style="background:rgba(8,145,178,0.15);color:var(--focus)">${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+            </div>
+            <textarea id="journal-input" rows="5" placeholder="How was studying today? What went well? What felt hard? Just let it out..." class="input w-full text-sm resize-none mb-3" style="background:var(--surface-2);border-color:var(--border-subtle);line-height:1.8;min-height:120px" onblur="autoSaveJournal()">${todayEntry ? todayEntry.text : ''}</textarea>
+            <div class="flex items-center justify-between">
+              <button onclick="addJournalEntry()" class="btn btn-primary text-sm px-5 py-2">${icon.plus} Save Entry</button>
+              <span class="text-xs text-[var(--text-muted)]" id="journal-save-status"></span>
+            </div>
+          </div>
+
+          <!-- Past Entries -->
+          ${state.journal.length > 0 ? `
+            <div class="mb-6">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold text-sm text-[var(--text-secondary)]">Past Entries</h2>
+                <span class="text-xs text-[var(--text-muted)]">${state.journal.length} total</span>
+              </div>
+              <div class="space-y-6">
+                ${Object.entries(grouped).map(([month, entries]) => `
+                  <div>
+                    <div class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3 pl-1">${month}</div>
+                    <div class="space-y-3">
+                      ${entries.map(j => {
+                        const isToday = j.date === today();
+                        const dayName = new Date(j.date+'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' });
+                        const dayNum = new Date(j.date+'T00:00:00').getDate();
+                        const preview = j.text.length > 150 ? j.text.substring(0, 150) + '...' : j.text;
+                        return `
+                          <div class="card p-4 transition-all hover-lift group" style="${isToday ? 'border-left:3px solid var(--focus)' : ''}">
+                            <div class="flex gap-4">
+                              <div class="text-center flex-shrink-0" style="min-width:40px">
+                                <div class="text-xs text-[var(--text-muted)]">${dayName}</div>
+                                <div class="text-lg font-bold ${isToday ? 'text-[var(--focus)]' : 'text-[var(--text-secondary)]'}">${dayNum}</div>
+                              </div>
+                              <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                  ${isToday ? '<span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background:rgba(8,145,178,0.15);color:var(--focus)">Today</span>' : ''}
+                                  <span class="text-xs text-[var(--text-muted)]">${formatDate(j.date)}</span>
+                                </div>
+                                <div id="journal-entry-${j.id}" class="text-sm text-[var(--text-secondary)] leading-relaxed">
+                                  <p class="journal-entry-text cursor-pointer" onclick="toggleJournalExpand(${j.id})">${preview.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</p>
+                                </div>
+                              </div>
+                              <div class="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                                <button onclick="editJournalEntry(${j.id})" class="text-[var(--text-muted)] hover:text-[var(--focus)] transition-colors p-1" title="Edit">${icon.edit}</button>
+                                <button onclick="deleteJournalEntry(${j.id})" class="delete-btn text-[var(--text-muted)] p-1" title="Delete">${icon.trash}</button>
+                              </div>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : `
+            <div class="card p-12 text-center">
+              <div class="text-4xl mb-4 opacity-50">${icon.edit}</div>
+              <h3 class="text-lg font-semibold mb-2">Start Your Journal</h3>
+              <p class="text-sm text-[var(--text-muted)] max-w-md mx-auto">Writing about your prep helps process emotions, track your mindset, and stay grounded. Even a few sentences each day makes a difference.</p>
+            </div>
+          `}
+
+          <div class="quote-card mt-8 reveal" style="border-left:2px solid var(--focus)">
+            <p class="text-sm mb-1">"${journalQuote.text}"</p>
+            <p class="text-xs text-[var(--text-muted)]">— ${journalQuote.author}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleJournalExpand(id) {
+      const entry = state.journal.find(j => j.id === id);
+      if (!entry) return;
+      const container = document.getElementById('journal-entry-' + id);
+      if (!container) return;
+      const textEl = container.querySelector('.journal-entry-text');
+      if (!textEl) return;
+      const isExpanded = textEl.dataset.expanded === 'true';
+      if (isExpanded) {
+        const preview = entry.text.length > 150 ? entry.text.substring(0, 150) + '...' : entry.text;
+        textEl.innerHTML = preview.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+        textEl.dataset.expanded = 'false';
+      } else {
+        textEl.innerHTML = entry.text.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+        textEl.dataset.expanded = 'true';
+      }
+    }
+
+    function editJournalEntry(id) {
+      const entry = state.journal.find(j => j.id === id);
+      if (!entry) return;
+      showModal(`
+        <div class="card p-6" style="width:500px;max-height:80vh">
+          <h3 class="font-semibold text-lg mb-2">Edit Journal Entry</h3>
+          <p class="text-xs text-[var(--text-muted)] mb-4">${formatDate(entry.date)}</p>
+          <textarea id="edit-journal-text" rows="8" class="input w-full text-sm resize-none mb-4" style="line-height:1.8;min-height:160px">${entry.text}</textarea>
+          <div class="flex gap-3">
+            <button onclick="hideModal()" class="btn btn-secondary flex-1">Cancel</button>
+            <button onclick="saveEditJournal(${id})" class="btn btn-primary flex-1">Save Changes</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function saveEditJournal(id) {
+      const entry = state.journal.find(j => j.id === id);
+      if (!entry) return;
+      const text = document.getElementById('edit-journal-text').value.trim();
+      if (!text) { showToast('Entry cannot be empty', 'error'); return; }
+      entry.text = text;
+      entry.updatedAt = Date.now();
+      save();
+      hideModal();
+      render();
+      showToast('Journal entry updated');
+    }
+
     function addJournalEntry() {
       const input = document.getElementById('journal-input');
       if (!input) return;
