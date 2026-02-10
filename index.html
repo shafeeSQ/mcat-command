@@ -1465,74 +1465,6 @@
       .demo-slide-body { padding: 16px; min-height: 320px; }
     }
 
-    /* ========== VIDEO DEMO ========== */
-    .video-demo {
-      padding: 100px 0 120px;
-      position: relative;
-      overflow: hidden;
-    }
-    .video-demo::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 50%; transform: translateX(-50%);
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .video-demo-wrapper {
-      max-width: 960px;
-      margin: 0 auto;
-      position: relative;
-    }
-    .video-demo-frame {
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: #0f1117;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.1);
-    }
-    .video-demo-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      background: #161922;
-      border-bottom: 1px solid var(--border);
-    }
-    .video-demo-dot { width: 12px; height: 12px; border-radius: 50%; }
-    .video-demo-dot.r { background: #ff5f57; }
-    .video-demo-dot.y { background: #ffbd2e; }
-    .video-demo-dot.g { background: #28c840; }
-    .video-demo-url {
-      flex: 1;
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
-      background: rgba(255,255,255,0.03);
-      padding: 4px 16px;
-      border-radius: 6px;
-      margin: 0 40px;
-    }
-    .video-demo-gif {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-    .video-demo-caption {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 14px;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    @media (max-width: 768px) {
-      .video-demo { padding: 60px 0 80px; }
-      .video-demo-frame { border-radius: 12px; }
-      .video-demo-bar { padding: 8px 12px; }
-      .video-demo-dot { width: 10px; height: 10px; }
-    }
 
     /* ========== FEATURES ========== */
     .features {
@@ -2830,29 +2762,6 @@
     </div>
   </section>
 
-
-  <!-- Video Demo -->
-  <section class="video-demo">
-    <div class="container">
-      <div class="section-header animate-on-scroll">
-        <div class="section-label">Watch It In Action</div>
-        <h2 class="section-title">See the Full <span class="gradient-text">Dashboard Experience</span></h2>
-        <p class="section-desc">From score tracking to study logs, content mastery to achievements — watch how everything works together.</p>
-      </div>
-      <div class="video-demo-wrapper animate-on-scroll">
-        <div class="video-demo-frame">
-          <div class="video-demo-bar">
-            <div class="video-demo-dot r"></div>
-            <div class="video-demo-dot y"></div>
-            <div class="video-demo-dot g"></div>
-            <div class="video-demo-url">mcat-dashboard.html</div>
-          </div>
-          <img src="mcat-dashboard-demo.gif" alt="MCAT Command Center dashboard walkthrough demo" class="video-demo-gif" loading="lazy">
-        </div>
-        <p class="video-demo-caption">Real dashboard walkthrough — every feature shown above is included.</p>
-      </div>
-    </div>
-  </section>
 
   <!-- Features -->
   <section class="features" id="features">
