@@ -1010,7 +1010,6 @@
       border: 1px solid var(--border);
       box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
       background: #0f1117;
-      position: relative;
     }
 
     .demo-titlebar {
@@ -1043,18 +1042,22 @@
       text-align: center;
     }
 
-    /* Carousel track */
+    /* Carousel track – slides horizontally */
+    .demo-carousel-area {
+      position: relative;
+      overflow: hidden;
+    }
     .demo-track {
       display: flex;
       transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
       will-change: transform;
     }
-
     .demo-screen {
       flex: 0 0 100%;
-      min-width: 100%;
+      width: 100%;
       padding: 24px;
       min-height: 420px;
+      box-sizing: border-box;
     }
 
     /* Prev/Next arrows */
@@ -2197,6 +2200,7 @@
           <div class="demo-url">mcat-dashboard.html</div>
         </div>
 
+        <div class="demo-carousel-area">
         <!-- Nav arrows -->
         <button class="demo-nav demo-nav-prev" id="demoPrev" aria-label="Previous">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
@@ -2617,6 +2621,7 @@
           </div>
         </div>
         </div><!-- /demo-track -->
+        </div><!-- /demo-carousel-area -->
 
         <!-- Progress dots -->
         <div class="demo-dots">
