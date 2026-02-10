@@ -1002,113 +1002,132 @@
       font-weight: 600;
     }
 
-    .demo-screen-wrapper {
-      max-width: 900px;
+    /* ========== 3D PEEK CAROUSEL ========== */
+    .demo-carousel {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
       margin: 0 auto;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
-      background: #0f1117;
+      perspective: 1200px;
     }
-
-    .demo-titlebar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      background: #161922;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .demo-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
-    .demo-dot.red { background: #ff5f57; }
-    .demo-dot.yellow { background: #ffbd2e; }
-    .demo-dot.green { background: #28c840; }
-
-    .demo-url {
-      margin-left: 12px;
-      font-size: 12px;
-      color: var(--text-muted);
-      background: rgba(255,255,255,0.05);
-      padding: 4px 16px;
-      border-radius: 6px;
-      flex: 1;
-      text-align: center;
-    }
-
-    /* Carousel – pixel-based sliding */
-    .demo-carousel-area {
+    .demo-viewport {
       position: relative;
       overflow: hidden;
-      width: 100%;
+      padding: 40px 0 20px;
     }
     .demo-track {
       display: flex;
-      transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+      align-items: center;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
       will-change: transform;
     }
-    .demo-screen {
-      min-width: 100%;
-      max-width: 100%;
+    .demo-slide {
       flex-shrink: 0;
+      width: 70%;
+      margin: 0 1.5%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #0f1117;
+      overflow: hidden;
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      transform: scale(0.85);
+      opacity: 0.4;
+      filter: blur(1.5px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+    .demo-slide.active {
+      transform: scale(1);
+      opacity: 1;
+      filter: blur(0);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.15);
+      z-index: 2;
+      cursor: default;
+    }
+    .demo-slide-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #161922;
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-slide-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .demo-slide-dot.r { background: #ff5f57; }
+    .demo-slide-dot.y { background: #ffbd2e; }
+    .demo-slide-dot.g { background: #28c840; }
+    .demo-slide-url {
+      margin-left: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.04);
+      padding: 3px 14px;
+      border-radius: 5px;
+      flex: 1;
+      text-align: center;
+    }
+    .demo-slide-body {
       padding: 24px;
-      min-height: 420px;
-      box-sizing: border-box;
+      min-height: 400px;
     }
 
-    /* Prev/Next arrows */
+    /* Nav arrows outside carousel */
     .demo-nav {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
       color: var(--text-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 10;
-      transition: all 0.2s;
-      backdrop-filter: blur(8px);
+      transition: all 0.25s;
+      backdrop-filter: blur(12px);
     }
     .demo-nav:hover {
-      background: rgba(255,255,255,0.15);
-      border-color: rgba(255,255,255,0.25);
+      background: rgba(139,92,246,0.15);
+      border-color: rgba(139,92,246,0.4);
       transform: translateY(-50%) scale(1.1);
     }
-    .demo-nav-prev { left: 12px; }
-    .demo-nav-next { right: 12px; }
+    .demo-nav-prev { left: -8px; }
+    .demo-nav-next { right: -8px; }
     .demo-nav svg { width: 20px; height: 20px; }
 
-    /* Progress dots under carousel */
+    /* Progress dots */
     .demo-dots {
       display: flex;
       justify-content: center;
       gap: 8px;
-      padding: 16px 0 16px;
+      padding: 24px 0 0;
     }
     .demo-dot-indicator {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      transition: all 0.3s;
+      background: rgba(255,255,255,0.12);
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
       cursor: pointer;
     }
+    .demo-dot-indicator:hover { background: rgba(255,255,255,0.3); }
     .demo-dot-indicator.active {
       background: var(--accent-purple);
-      width: 24px;
+      width: 28px;
       border-radius: 4px;
+      box-shadow: 0 0 12px rgba(139,92,246,0.4);
+    }
+
+    @media (max-width: 768px) {
+      .demo-slide { width: 85%; margin: 0 1%; }
+      .demo-nav-prev { left: 4px; }
+      .demo-nav-next { right: 4px; }
+      .demo-nav { width: 36px; height: 36px; }
+      .demo-slide-body { padding: 16px; min-height: 320px; }
     }
 
     /* Dashboard mock */
@@ -1365,7 +1384,7 @@
       .mock-table-row { grid-template-columns: 70px 1fr 60px; }
       .mock-table-header > :last-child,
       .mock-table-row > :last-child { display: none; }
-      .demo-screen { padding: 16px; min-height: 320px; }
+      .demo-slide-body { padding: 16px; min-height: 320px; }
     }
 
     /* ========== FEATURES ========== */
@@ -2194,15 +2213,8 @@
         <button class="demo-tab" data-tab="6">Study Guide</button>
       </div>
 
-      <div class="demo-screen-wrapper animate-on-scroll">
-        <div class="demo-titlebar">
-          <div class="demo-dot red"></div>
-          <div class="demo-dot yellow"></div>
-          <div class="demo-dot green"></div>
-          <div class="demo-url">mcat-dashboard.html</div>
-        </div>
-
-        <div class="demo-carousel-area">
+      <div class="demo-carousel animate-on-scroll">
+        <div class="demo-viewport">
         <!-- Nav arrows -->
         <button class="demo-nav demo-nav-prev" id="demoPrev" aria-label="Previous">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
@@ -2214,7 +2226,9 @@
         <div class="demo-track" id="demoTrack">
 
         <!-- Dashboard Screen -->
-        <div class="demo-screen" id="demo-dashboard">
+        <div class="demo-slide active" data-slide="0">
+          <div class="demo-slide-bar"><div class="demo-slide-dot r"></div><div class="demo-slide-dot y"></div><div class="demo-slide-dot g"></div><div class="demo-slide-url">mcat-dashboard.html</div></div>
+          <div class="demo-slide-body">
           <div class="mock-stats">
             <div class="mock-stat">
               <div class="mock-stat-label">Days Until Test</div>
@@ -2289,9 +2303,12 @@
             </div>
           </div>
         </div>
+        </div>
 
         <!-- Score Tracker Screen -->
-        <div class="demo-screen" id="demo-scores">
+        <div class="demo-slide" data-slide="1">
+          <div class="demo-slide-bar"><div class="demo-slide-dot r"></div><div class="demo-slide-dot y"></div><div class="demo-slide-dot g"></div><div class="demo-slide-url">mcat-dashboard.html</div></div>
+          <div class="demo-slide-body">
           <div class="mock-stats">
             <div class="mock-stat">
               <div class="mock-stat-label">Latest</div>
@@ -2345,9 +2362,12 @@
             </div>
           </div>
         </div>
+        </div>
 
         <!-- Content Mastery Screen -->
-        <div class="demo-screen" id="demo-content">
+        <div class="demo-slide" data-slide="2">
+          <div class="demo-slide-bar"><div class="demo-slide-dot r"></div><div class="demo-slide-dot y"></div><div class="demo-slide-dot g"></div><div class="demo-slide-url">mcat-dashboard.html</div></div>
+          <div class="demo-slide-body">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
             <div>
               <div style="font-size:18px;font-weight:700;">AAMC Content Outline</div>
@@ -2385,9 +2405,12 @@
             <div class="mock-topic-row"><span>4D &middot; Light &amp; Sound</span><div><span class="mock-topic-pct" style="color:var(--accent-green);">92%</span> <span style="color:var(--text-muted);font-size:11px;">13 topics</span></div></div>
           </div>
         </div>
+        </div>
 
         <!-- Study Log Screen -->
-        <div class="demo-screen" id="demo-log">
+        <div class="demo-slide" data-slide="3">
+          <div class="demo-slide-bar"><div class="demo-slide-dot r"></div><div class="demo-slide-dot y"></div><div class="demo-slide-dot g"></div><div class="demo-slide-url">mcat-dashboard.html</div></div>
+          <div class="demo-slide-body">
           <div class="mock-stats" style="grid-template-columns: repeat(3, 1fr);">
             <div class="mock-stat">
               <div class="mock-stat-label">Today</div>
@@ -2458,9 +2481,12 @@
             <div class="mock-table-row"><span>Feb 6</span><span>CARS Practice</span><span class="hours">1.5h</span><span style="color:var(--text-muted);">JW daily</span></div>
           </div>
         </div>
+        </div>
 
         <!-- Journal Screen -->
-        <div class="demo-screen" id="demo-journal">
+        <div class="demo-slide" data-slide="4">
+          <div class="demo-slide-bar"><div class="demo-slide-dot r"></div><div class="demo-slide-dot y"></div><div class="demo-slide-dot g"></div><div class="demo-slide-url">mcat-dashboard.html</div></div>
+          <div class="demo-slide-body">
           <div style="max-width:600px;margin:0 auto;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
               <div>
@@ -2500,9 +2526,12 @@
             </div>
           </div>
         </div>
+        </div>
 
         <!-- Study Guide Screen -->
-        <div class="demo-screen" id="demo-guide">
+        <div class="demo-slide" data-slide="5">
+          <div class="demo-slide-bar"><div class="demo-slide-dot r"></div><div class="demo-slide-dot y"></div><div class="demo-slide-dot g"></div><div class="demo-slide-url">mcat-dashboard.html</div></div>
+          <div class="demo-slide-body">
           <div style="max-width:650px;margin:0 auto;">
             <div style="margin-bottom:20px;">
               <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Study Guide</div>
@@ -2564,9 +2593,12 @@
             </div>
           </div>
         </div>
+        </div>
 
         <!-- Resources Screen -->
-        <div class="demo-screen" id="demo-resources">
+        <div class="demo-slide" data-slide="6">
+          <div class="demo-slide-bar"><div class="demo-slide-dot r"></div><div class="demo-slide-dot y"></div><div class="demo-slide-dot g"></div><div class="demo-slide-url">mcat-dashboard.html</div></div>
+          <div class="demo-slide-body">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
             <div>
               <div style="font-size:18px;font-weight:700;">Resource Library</div>
@@ -2622,8 +2654,9 @@
             </div>
           </div>
         </div>
+        </div>
         </div><!-- /demo-track -->
-        </div><!-- /demo-carousel-area -->
+        </div><!-- /demo-viewport -->
 
         <!-- Progress dots -->
         <div class="demo-dots">
@@ -3438,46 +3471,49 @@
       }
     });
 
-    // ========== DEMO SLIDING CAROUSEL ==========
+    // ========== 3D PEEK CAROUSEL ==========
     (function() {
-      const track = document.getElementById('demoTrack');
+      var track = document.getElementById('demoTrack');
       if (!track) return;
-      const area = track.parentElement;
-      const slides = Array.from(track.children);
-      const totalSlides = slides.length;
-      if (totalSlides === 0) return;
+      var viewport = track.parentElement;
+      var slides = Array.from(track.querySelectorAll('.demo-slide'));
+      var total = slides.length;
+      if (total === 0) return;
 
-      const tabs = document.querySelectorAll('.demo-tab');
-      const dots = document.querySelectorAll('.demo-dot-indicator');
-      const prevBtn = document.getElementById('demoPrev');
-      const nextBtn = document.getElementById('demoNext');
-      const wrapper = document.querySelector('.demo-screen-wrapper');
-      let current = 0;
-      let autoInterval = null;
-      let touchStartX = 0;
-
-      function getSlideWidth() {
-        return area.offsetWidth;
-      }
+      var tabs = document.querySelectorAll('.demo-tab');
+      var dots = document.querySelectorAll('.demo-dot-indicator');
+      var prevBtn = document.getElementById('demoPrev');
+      var nextBtn = document.getElementById('demoNext');
+      var carousel = document.querySelector('.demo-carousel');
+      var current = 0;
+      var autoInterval = null;
+      var touchStartX = 0;
 
       function goTo(index, skipAuto) {
-        if (index < 0) index = totalSlides - 1;
-        if (index >= totalSlides) index = 0;
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
         current = index;
-        var px = current * getSlideWidth();
-        track.style.transform = 'translateX(-' + px + 'px)';
+
+        // Each slide is 70% wide + 3% margin (1.5% each side) = 73% per slide
+        // Center offset: (100% - 73%) / 2 = 13.5% from left edge to center the active slide
+        // translateX = -(current * 73) + 13.5
+        var offset = -(current * 73) + 13.5;
+        track.style.transform = 'translateX(' + offset + '%)';
+
+        // Toggle active class on slides
+        slides.forEach(function(s, i) {
+          s.classList.toggle('active', i === current);
+        });
+
+        // Update tabs and dots
         tabs.forEach(function(t, i) { t.classList.toggle('active', i === current); });
         dots.forEach(function(d, i) { d.classList.toggle('active', i === current); });
-        if (prevBtn) prevBtn.style.opacity = current === 0 ? '0.3' : '1';
-        if (nextBtn) nextBtn.style.opacity = current === totalSlides - 1 ? '0.3' : '1';
+
         if (!skipAuto) resetAuto();
       }
 
       function next() { goTo(current + 1); }
       function prev() { goTo(current - 1); }
-
-      // Recalc on resize
-      window.addEventListener('resize', function() { goTo(current, true); });
 
       // Arrow buttons
       if (prevBtn) prevBtn.addEventListener('click', prev);
@@ -3499,14 +3535,22 @@
         });
       });
 
+      // Click on non-active slide to navigate to it
+      slides.forEach(function(slide) {
+        slide.addEventListener('click', function() {
+          var idx = parseInt(slide.getAttribute('data-slide'), 10);
+          if (!isNaN(idx) && idx !== current) goTo(idx);
+        });
+      });
+
       // Touch/swipe
-      if (wrapper) {
-        wrapper.addEventListener('touchstart', function(e) {
+      if (carousel) {
+        carousel.addEventListener('touchstart', function(e) {
           touchStartX = e.touches[0].clientX;
           clearInterval(autoInterval);
         }, { passive: true });
 
-        wrapper.addEventListener('touchend', function(e) {
+        carousel.addEventListener('touchend', function(e) {
           var diff = touchStartX - e.changedTouches[0].clientX;
           if (Math.abs(diff) > 50) {
             if (diff > 0) next(); else prev();
@@ -3519,21 +3563,18 @@
       // Auto-rotation
       function resetAuto() {
         clearInterval(autoInterval);
-        autoInterval = setInterval(function() { goTo(current + 1); }, 5000);
+        autoInterval = setInterval(function() { goTo(current + 1); }, 4000);
       }
 
       // Pause on hover
-      if (wrapper) {
-        wrapper.addEventListener('mouseenter', function() { clearInterval(autoInterval); });
-        wrapper.addEventListener('mouseleave', resetAuto);
+      if (carousel) {
+        carousel.addEventListener('mouseenter', function() { clearInterval(autoInterval); });
+        carousel.addEventListener('mouseleave', resetAuto);
       }
 
       // Init
       goTo(0, true);
       resetAuto();
-
-      // Debug log
-      console.log('[Carousel] initialized: ' + totalSlides + ' slides, area width: ' + getSlideWidth() + 'px');
     })();
 
     // ========== FAQ SMOOTH TOGGLE ==========
