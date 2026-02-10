@@ -380,7 +380,10 @@
 
     /* Typing effect */
     .typing-text {
-      display: inline;
+      display: inline-block;
+      min-width: 2px;
+      min-height: 1.2em;
+      vertical-align: bottom;
       border-right: 3px solid var(--accent-purple);
       animation: typing-cursor 1s infinite;
       padding-right: 4px;
@@ -3005,8 +3008,8 @@
       'builds study habits'
     ];
     let phraseIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
+    let charIndex = typingPhrases[0].length;
+    let isDeleting = true;
     const typingEl = document.getElementById('typingText');
 
     function typeEffect() {
