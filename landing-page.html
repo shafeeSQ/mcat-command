@@ -425,6 +425,145 @@
     .parallax-medium { will-change: transform; }
     .parallax-fast { will-change: transform; }
 
+    /* ========== CINEMATIC INTRO ========== */
+    .cinema-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      pointer-events: all;
+      overflow: hidden;
+    }
+
+    .cinema-overlay.done {
+      pointer-events: none;
+    }
+
+    /* Letterbox bars */
+    .cinema-bar-top, .cinema-bar-bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 0;
+      background: #000;
+      z-index: 2;
+      transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cinema-bar-top { top: 0; }
+    .cinema-bar-bottom { bottom: 0; }
+    .cinema-overlay.letterbox .cinema-bar-top,
+    .cinema-overlay.letterbox .cinema-bar-bottom {
+      height: 12vh;
+    }
+
+    /* Central content */
+    .cinema-center {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cinema-overlay.show-text .cinema-center {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .cinema-tagline {
+      font-size: clamp(14px, 2vw, 18px);
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      color: var(--accent-purple);
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.6s ease 0.2s;
+    }
+    .cinema-overlay.show-text .cinema-tagline {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cinema-title {
+      font-size: clamp(40px, 7vw, 80px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+    }
+    .cinema-overlay.show-text .cinema-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cinema-subtitle {
+      font-size: clamp(16px, 2.5vw, 22px);
+      color: var(--text-secondary);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.6s ease 0.6s;
+    }
+    .cinema-overlay.show-text .cinema-subtitle {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Curtain split open */
+    .cinema-curtain-left, .cinema-curtain-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      background: var(--bg-primary);
+      z-index: 4;
+      transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .cinema-curtain-left { left: 0; }
+    .cinema-curtain-right { right: 0; }
+    .cinema-overlay.split .cinema-curtain-left {
+      transform: translateX(-100%);
+    }
+    .cinema-overlay.split .cinema-curtain-right {
+      transform: translateX(100%);
+    }
+
+    /* Final fade */
+    .cinema-overlay.fade-out {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+
+    /* Scanline for cinematic feel */
+    .cinema-scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent-purple), var(--accent-green), transparent);
+      z-index: 5;
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    .cinema-overlay.scan .cinema-scanline {
+      animation: scanDown 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes scanDown {
+      0% { transform: translateY(-10px); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0.3; }
+    }
+
+    /* Prevent scroll during intro */
+    body.cinema-active {
+      overflow: hidden;
+    }
+
     @media (max-width: 768px) {
       .cursor-glow, .particles-container { display: none; }
       .sticky-cta .container { flex-direction: column; gap: 8px; text-align: center; }
@@ -447,6 +586,8 @@
       background-size: 60px 60px;
       pointer-events: none;
       z-index: 0;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .bg-glow {
@@ -458,6 +599,8 @@
       opacity: 0.15;
       pointer-events: none;
       z-index: 0;
+      will-change: transform;
+      transform: translateZ(0);
     }
 
     .bg-glow-1 { top: -200px; left: -100px; background: var(--accent-blue); }
@@ -1767,7 +1910,21 @@
     ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
   </style>
 </head>
-<body>
+<body class="cinema-active">
+  <!-- Cinematic Intro Overlay -->
+  <div class="cinema-overlay" id="cinemaOverlay">
+    <div class="cinema-bar-top"></div>
+    <div class="cinema-bar-bottom"></div>
+    <div class="cinema-scanline"></div>
+    <div class="cinema-curtain-left"></div>
+    <div class="cinema-curtain-right"></div>
+    <div class="cinema-center">
+      <div class="cinema-tagline">The #1 MCAT Study Tool</div>
+      <div class="cinema-title">Your Path to <span class="gradient-text">520+</span></div>
+      <div class="cinema-subtitle">Starts now.</div>
+    </div>
+  </div>
+
   <!-- Scroll Progress Bar -->
   <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -2780,7 +2937,7 @@
 
       <div class="faq-grid">
         <div class="faq-item open animate-on-scroll">
-          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+          <button class="faq-trigger">
             <span>How does the dashboard work?</span>
             <span class="faq-icon">+</span>
           </button>
@@ -2790,7 +2947,7 @@
         </div>
 
         <div class="faq-item animate-on-scroll">
-          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+          <button class="faq-trigger">
             <span>Can I use it on multiple devices?</span>
             <span class="faq-icon">+</span>
           </button>
@@ -2800,7 +2957,7 @@
         </div>
 
         <div class="faq-item animate-on-scroll">
-          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+          <button class="faq-trigger">
             <span>What browsers does it work on?</span>
             <span class="faq-icon">+</span>
           </button>
@@ -2810,7 +2967,7 @@
         </div>
 
         <div class="faq-item animate-on-scroll">
-          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+          <button class="faq-trigger">
             <span>What's included in the AAMC content?</span>
             <span class="faq-icon">+</span>
           </button>
@@ -2820,7 +2977,7 @@
         </div>
 
         <div class="faq-item animate-on-scroll">
-          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+          <button class="faq-trigger">
             <span>Is my data private?</span>
             <span class="faq-icon">+</span>
           </button>
@@ -2830,7 +2987,7 @@
         </div>
 
         <div class="faq-item animate-on-scroll">
-          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+          <button class="faq-trigger">
             <span>Do I get updates?</span>
             <span class="faq-icon">+</span>
           </button>
@@ -2840,7 +2997,7 @@
         </div>
 
         <div class="faq-item animate-on-scroll">
-          <button class="faq-trigger" onclick="this.parentElement.classList.toggle('open')">
+          <button class="faq-trigger">
             <span>Why not just use a spreadsheet?</span>
             <span class="faq-icon">+</span>
           </button>
@@ -2894,11 +3051,45 @@
   </footer>
 
   <script>
-    // ========== NAVBAR SCROLL ==========
+    // ========== CINEMATIC INTRO SEQUENCE ==========
+    (function runCinemaIntro() {
+      const overlay = document.getElementById('cinemaOverlay');
+      if (!overlay) return;
+
+      // Only show intro once per session
+      if (sessionStorage.getItem('cinema-seen')) {
+        overlay.remove();
+        document.body.classList.remove('cinema-active');
+        return;
+      }
+
+      const timeline = [
+        [100, () => overlay.classList.add('letterbox')],       // Letterbox bars slide in
+        [600, () => overlay.classList.add('show-text')],       // Text fades in
+        [2400, () => overlay.classList.add('scan')],           // Scanline sweeps down
+        [3000, () => {
+          overlay.classList.remove('show-text');                // Text fades out
+          overlay.querySelector('.cinema-center').style.opacity = '0';
+          overlay.querySelector('.cinema-center').style.transform = 'scale(1.1)';
+          overlay.querySelector('.cinema-center').style.transition = 'all 0.5s ease';
+        }],
+        [3400, () => overlay.classList.add('split')],          // Curtains split open
+        [3600, () => overlay.classList.remove('letterbox')],   // Bars retract
+        [4000, () => {
+          overlay.classList.add('fade-out', 'done');
+          document.body.classList.remove('cinema-active');
+        }],
+        [4600, () => {
+          overlay.remove();
+          sessionStorage.setItem('cinema-seen', '1');
+        }]
+      ];
+
+      timeline.forEach(([delay, fn]) => setTimeout(fn, delay));
+    })();
+
+    // ========== NAVBAR ==========
     const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 50);
-    });
 
     // ========== SCROLL PROGRESS BAR ==========
     const scrollProgress = document.getElementById('scrollProgress');
@@ -2908,7 +3099,6 @@
       const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
       scrollProgress.style.width = progress + '%';
     }
-    window.addEventListener('scroll', updateScrollProgress, { passive: true });
 
     // ========== CURSOR GLOW ==========
     const cursorGlow = document.getElementById('cursorGlow');
@@ -3072,16 +3262,17 @@
     });
 
     // ========== PARALLAX ON SCROLL ==========
+    const parallaxEls = document.querySelectorAll('.parallax-slow');
+    const blobEls = document.querySelectorAll('.morph-blob');
     function handleParallax() {
       const scrollY = window.scrollY;
-      document.querySelectorAll('.parallax-slow').forEach(el => {
-        el.style.transform = `translateY(${scrollY * 0.03}px)`;
+      parallaxEls.forEach(el => {
+        el.style.transform = `translateY(${scrollY * 0.03}px) translateZ(0)`;
       });
-      document.querySelectorAll('.morph-blob').forEach(el => {
-        el.style.transform += ` translateY(${scrollY * -0.05}px)`;
+      blobEls.forEach(el => {
+        el.style.translate = `0 ${scrollY * -0.05}px`;
       });
     }
-    window.addEventListener('scroll', handleParallax, { passive: true });
 
     // ========== STICKY CTA BAR ==========
     const stickyCta = document.getElementById('stickyCta');
@@ -3098,7 +3289,6 @@
         stickyCta.classList.remove('visible');
       }
     }
-    window.addEventListener('scroll', updateStickyCta, { passive: true });
 
     // ========== MOBILE MENU ==========
     document.addEventListener('keydown', (e) => {
@@ -3166,18 +3356,15 @@
       });
     });
 
-    // ========== PERFORMANCE: throttle scroll handlers ==========
+    // ========== SINGLE SCROLL HANDLER (perf) ==========
     let ticking = false;
-    const scrollHandlers = [updateScrollProgress, handleParallax, updateStickyCta];
-
-    window.removeEventListener('scroll', updateScrollProgress);
-    window.removeEventListener('scroll', handleParallax);
-    window.removeEventListener('scroll', updateStickyCta);
-
     window.addEventListener('scroll', () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          scrollHandlers.forEach(fn => fn());
+          updateScrollProgress();
+          handleParallax();
+          updateStickyCta();
+          navbar.classList.toggle('scrolled', window.scrollY > 50);
           ticking = false;
         });
         ticking = true;
