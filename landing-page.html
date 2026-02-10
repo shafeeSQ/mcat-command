@@ -418,7 +418,7 @@
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: #000;
+      background: radial-gradient(ellipse at center, #0a0e17 0%, #000 70%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -581,11 +581,11 @@
       pointer-events: none;
     }
 
-    /* Phase 3: overlay dissolves with a bright flash then fade */
+    /* Phase 3: overlay dissolves smoothly */
     .cinema-overlay.p3 {
-      background: radial-gradient(circle at center, rgba(8,145,178,0.15) 0%, #000 70%);
       opacity: 0;
-      transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: opacity 0.8s ease-out;
+      pointer-events: none;
     }
 
     /* Page content starts hidden, reveals after cinema */
@@ -1046,15 +1046,18 @@
     .demo-carousel-area {
       position: relative;
       overflow: hidden;
+      width: 100%;
     }
     .demo-track {
       display: flex;
-      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      flex-wrap: nowrap;
+      width: 700%;
+      transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
       will-change: transform;
     }
     .demo-screen {
-      flex: 0 0 100%;
-      width: 100%;
+      width: calc(100% / 7);
+      flex: none;
       padding: 24px;
       min-height: 420px;
       box-sizing: border-box;
@@ -3260,17 +3263,24 @@
           ov.classList.add('p3');
           document.body.classList.remove('cinema-active');
           document.body.classList.add('cinema-reveal');
-        }, 600);
+        }, 450);
         // Clean up
-        setTimeout(() => ov.remove(), 1600);
+        setTimeout(() => ov.remove(), 1300);
       }
 
       ov.addEventListener('click', dismiss);
 
-      // p1: everything animates in
-      setTimeout(() => ov.classList.add('p1'), 100);
+      // Warm up canvas so first draw isn't janky
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // p1: start entrance after a single frame (not arbitrary 100ms)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          ov.classList.add('p1');
+        });
+      });
       // auto-dismiss after hold
-      setTimeout(dismiss, 3200);
+      setTimeout(dismiss, 3000);
     })();
 
     // ========== NAVBAR ==========
@@ -3450,7 +3460,8 @@
         if (index < 0) index = totalSlides - 1;
         if (index >= totalSlides) index = 0;
         current = index;
-        track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        const pct = current * (100 / totalSlides);
+        track.style.transform = 'translateX(-' + pct + '%)';
         // Update tabs
         tabs.forEach((t, i) => t.classList.toggle('active', i === current));
         // Update dots
