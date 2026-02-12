@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+*.pack
+.remotion/
+mcat-ad/node_modules/
+mcat-ad/.DS_Store

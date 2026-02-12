@@ -1492,6 +1492,15 @@
       logTopicSearch: '',
       // Journal
       journal: JSON.parse(localStorage.getItem('mcat-journal') || '[]'),
+      // Mistake Log
+      mistakes: JSON.parse(localStorage.getItem('mcat-mistakes') || '[]'),
+      mistakeFilter: 'all',
+      mistakeSort: 'newest',
+      mistakeSearch: '',
+      mistakeSection: null,
+      mistakeTopics: [],
+      mistakeTopicSearch: '',
+      _expandedMistake: null,
       // Study Guide UI state
       guideSearch: '',
       guideExpanded: {}
@@ -3736,6 +3745,7 @@
       localStorage.setItem('mcat-user-name', state.userName);
       localStorage.setItem('mcat-study-phase', state.studyPhase);
       localStorage.setItem('mcat-journal', JSON.stringify(state.journal));
+      localStorage.setItem('mcat-mistakes', JSON.stringify(state.mistakes));
 
       // Also save to file if connected
       if (fileHandle) {
@@ -4061,10 +4071,14 @@
       if (e.key === 'f' || e.key === 'F') { state.focusMode ? exitFocusMode() : enterFocusMode(); return; }
       if (e.key === ' ') { e.preventDefault(); state.timerRunning ? pauseTimer() : startTimer(); return; }
 
-      const tabs = ['dashboard', 'study', 'journal', 'scores', 'content', 'resources', 'guide', 'timer'];
+      const tabs = ['dashboard', 'study', 'journal', 'scores', 'content', 'resources', 'guide', 'timer', 'achievements', 'mistakes'];
       const num = parseInt(e.key);
-      if (num >= 1 && num <= 8) {
+      if (num >= 1 && num <= 9) {
         state.tab = tabs[num - 1];
+        render();
+      }
+      if (e.key === '0') {
+        state.tab = tabs[9];
         render();
       }
     });
@@ -4461,7 +4475,8 @@
         {id:'resources', icon:icon.folder, label:'Resources'},
         {id:'guide', icon:icon.helpCircle, label:'Study Guide'},
         {id:'timer', icon:icon.clock, label:'Timer'},
-        {id:'achievements', icon:icon.trophy, label:'Achievements'}
+        {id:'achievements', icon:icon.trophy, label:'Achievements'},
+        {id:'mistakes', icon:icon.alertTriangle, label:'Mistake Log'}
       ];
 
       document.getElementById('app').innerHTML = `
@@ -4560,6 +4575,7 @@
         else if(state.tab==='guide') renderGuide(m);
         else if(state.tab==='timer') renderTimer(m);
         else if(state.tab==='achievements') renderAchievements(m);
+        else if(state.tab==='mistakes') renderMistakes(m);
       };
 
       if (isTabChange && scrollTop > 0) {
@@ -7039,6 +7055,372 @@
         isOnTrack,
         progressPercent: Math.min(100, (totalHours / recommendedTotal) * 100)
       };
+    }
+
+    // ===== MISTAKE LOG =====
+    function getMistakeTopicPickerHTML(sectionMeta) {
+      const search = state.mistakeTopicSearch.toLowerCase();
+      const sKey = state.mistakeSection === 'cp' ? 'C/P' : state.mistakeSection === 'cars' ? 'CARS' : state.mistakeSection === 'bb' ? 'B/B' : 'P/S';
+      const secColor = sectionMeta[state.mistakeSection].color;
+      const secName = sectionMeta[state.mistakeSection].name;
+      const topics = (SECTIONS[sKey] ? SECTIONS[sKey].topics : []).filter(function(t) { return !search || t.toLowerCase().includes(search); });
+      var topicRows = '';
+      if (!topics.length) {
+        topicRows = '<div class="text-xs text-[var(--text-muted)] text-center py-3">No topics match</div>';
+      } else {
+        topicRows = topics.slice(0, 30).map(function(t) {
+          var y = getYield(t);
+          var checked = state.mistakeTopics.includes(t);
+          var escapedT = t.replace(/'/g, "\\'");
+          return '<label class="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ' + (checked ? 'bg-[var(--surface-3)]' : 'hover:bg-[var(--surface-3)]') + '">' +
+            '<input type="checkbox" ' + (checked ? 'checked' : '') + ' onchange="toggleMistakeTopic(\'' + escapedT + '\')" style="accent-color:' + secColor + '">' +
+            '<span class="text-sm flex-1 ' + (checked ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]') + '">' + t + '</span>' +
+            '<span class="text-[0.6rem] font-bold px-1.5 py-0.5 rounded" style="background:' + YIELD[y].bg + ';color:' + YIELD[y].color + '">' + YIELD[y].label + '</span>' +
+            '</label>';
+        }).join('');
+      }
+      return '<div class="mb-4 p-4 rounded-xl" style="background:var(--surface-2);border:1px solid var(--border-subtle)">' +
+        '<div class="flex items-center justify-between mb-3">' +
+        '<span class="text-sm font-medium" style="color:' + secColor + '">Link to ' + secName + ' Topics</span>' +
+        '<span class="text-xs text-[var(--text-muted)]">' + state.mistakeTopics.length + ' selected</span>' +
+        '</div>' +
+        '<input type="text" value="' + state.mistakeTopicSearch + '" oninput="state.mistakeTopicSearch=this.value;render()" placeholder="Search AAMC topics..." class="input mb-3 text-sm" style="background:var(--bg);border-color:var(--border-subtle)">' +
+        '<div class="space-y-1 max-h-[180px] overflow-y-auto pr-1" style="scrollbar-width:thin">' +
+        topicRows +
+        '</div></div>';
+    }
+
+    function renderMistakes(el) {
+      const t = today();
+      const totalM = state.mistakes.length;
+      const unreviewed = state.mistakes.filter(m => !m.reviewed).length;
+
+      // Most-missed section
+      const secCounts = {};
+      state.mistakes.forEach(m => { secCounts[m.section] = (secCounts[m.section] || 0) + 1; });
+      const topSec = Object.entries(secCounts).sort((a,b) => b[1] - a[1])[0];
+
+      // Filter
+      let filtered = [...state.mistakes];
+      if (state.mistakeFilter === 'unreviewed') filtered = filtered.filter(m => !m.reviewed);
+      else if (state.mistakeFilter !== 'all') filtered = filtered.filter(m => m.section === state.mistakeFilter);
+
+      // Search
+      if (state.mistakeSearch) {
+        const q = state.mistakeSearch.toLowerCase();
+        filtered = filtered.filter(m =>
+          (m.question||'').toLowerCase().includes(q) ||
+          (m.concept||'').toLowerCase().includes(q) ||
+          (m.source||'').toLowerCase().includes(q) ||
+          (m.tags||[]).some(t => t.toLowerCase().includes(q)) ||
+          (m.topics||[]).some(t => t.toLowerCase().includes(q))
+        );
+      }
+
+      // Sort
+      switch(state.mistakeSort) {
+        case 'oldest': filtered.sort((a,b) => new Date(a.date) - new Date(b.date)); break;
+        case 'section': filtered.sort((a,b) => (a.section||'').localeCompare(b.section||'')); break;
+        case 'source': filtered.sort((a,b) => (a.source||'').localeCompare(b.source||'')); break;
+        case 'concept': filtered.sort((a,b) => (a.concept||'').localeCompare(b.concept||'')); break;
+        default: filtered.sort((a,b) => new Date(b.date) - new Date(a.date)); break;
+      }
+
+      const sectionMeta = {
+        'cp': { label: 'C/P', name: 'Chem/Phys', color: '#60a5fa' },
+        'cars': { label: 'CARS', name: 'Critical Analysis', color: '#fbbf24' },
+        'bb': { label: 'B/B', name: 'Bio/Biochem', color: '#c084fc' },
+        'ps': { label: 'P/S', name: 'Psych/Soc', color: '#4ade80' }
+      };
+
+      el.innerHTML = `
+        <div class="p-8 max-w-5xl animate-in">
+          <h1 class="text-2xl font-bold mb-6">${icon.alertTriangle} Mistake Log</h1>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-5 mb-8 reveal">
+            <div class="glow-card glow-red p-5 tilt-card">
+              <div class="stat-label mb-2">Total Mistakes</div>
+              <div class="stat-value text-[var(--alert)] counter" data-target="${totalM}">${totalM}</div>
+            </div>
+            <div class="glow-card glow-amber p-5 tilt-card">
+              <div class="stat-label mb-2">Unreviewed</div>
+              <div class="stat-value text-[var(--energy)] counter" data-target="${unreviewed}">${unreviewed}</div>
+            </div>
+            <div class="glow-card glow-purple p-5 tilt-card">
+              <div class="stat-label mb-2">Most Missed</div>
+              <div class="stat-value" style="color:${topSec ? sectionMeta[topSec[0]].color : 'var(--text-muted)'}">${topSec ? sectionMeta[topSec[0]].label + ' (' + topSec[1] + ')' : '—'}</div>
+            </div>
+          </div>
+
+          <!-- Add Form -->
+          <div class="card p-6 mb-8 reveal">
+            <h2 class="font-semibold mb-4">${icon.plus} Log a Mistake</h2>
+
+            <div class="grid grid-cols-3 gap-4 mb-4">
+              <div><label class="stat-label block mb-2">Date</label><input type="date" id="mist-date" value="${t}" class="input"></div>
+              <div><label class="stat-label block mb-2">Source</label><input type="text" id="mist-source" placeholder="AAMC FL 1, UWorld, etc." class="input"></div>
+              <div><label class="stat-label block mb-2">Concept</label><input type="text" id="mist-concept" placeholder="e.g. Enzyme kinetics" class="input"></div>
+            </div>
+
+            <!-- Section Pills -->
+            <div class="mb-4">
+              <label class="stat-label block mb-2">Section</label>
+              <div class="flex gap-2 flex-wrap">
+                ${Object.entries(sectionMeta).map(([key, s]) => `
+                  <button onclick="state.mistakeSection='${key}';state.mistakeTopics=[];state.mistakeTopicSearch='';render()" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all" style="${state.mistakeSection===key ? `background:${s.color}20;color:${s.color};box-shadow:0 0 12px ${s.color}30` : `color:var(--text-muted)`}">
+                    <span class="inline-block w-2 h-2 rounded-full mr-1" style="background:${s.color}"></span>${s.label}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="stat-label block mb-2">Question / What was asked</label>
+              <textarea id="mist-question" rows="2" placeholder="Describe the question or concept tested..." class="input" style="resize:vertical"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="stat-label block mb-2">My Answer <span class="text-[var(--text-muted)] font-normal">(what I chose & why)</span></label>
+                <textarea id="mist-my-answer" rows="2" placeholder="What you picked and your reasoning..." class="input" style="resize:vertical"></textarea>
+              </div>
+              <div>
+                <label class="stat-label block mb-2">Correct Answer <span class="text-[var(--text-muted)] font-normal">(explanation)</span></label>
+                <textarea id="mist-correct" rows="2" placeholder="Right answer and why..." class="input" style="resize:vertical"></textarea>
+              </div>
+            </div>
+
+            <!-- Topic Autocomplete (from AAMC outline) -->
+            ${state.mistakeSection ? getMistakeTopicPickerHTML(sectionMeta) : ''}
+
+            <!-- Tags -->
+            <div class="mb-4">
+              <label class="stat-label block mb-2">Tags <span class="text-[var(--text-muted)] font-normal">(comma-separated, optional)</span></label>
+              <input type="text" id="mist-tags" placeholder="e.g. enzymes, kinetics, tricky" class="input">
+            </div>
+
+            <button onclick="addMistake()" class="btn btn-primary">${icon.plus} Log Mistake</button>
+          </div>
+
+          <!-- Sort & Filter Bar -->
+          <div class="card p-4 mb-4 reveal">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-[var(--text-muted)] font-medium">Filter:</span>
+                ${[
+                  { key: 'all', label: 'All' },
+                  { key: 'cp', label: 'C/P' },
+                  { key: 'cars', label: 'CARS' },
+                  { key: 'bb', label: 'B/B' },
+                  { key: 'ps', label: 'P/S' },
+                  { key: 'unreviewed', label: 'Unreviewed' }
+                ].map(f => `
+                  <button onclick="state.mistakeFilter='${f.key}';render()" class="px-3 py-1 rounded-full text-xs font-semibold transition-all ${state.mistakeFilter === f.key ? 'bg-[var(--surface-3)] text-[var(--text-primary)] ring-1 ring-[var(--border-subtle)]' : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'}">${f.label}</button>
+                `).join('')}
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-[var(--text-muted)] font-medium">Sort:</span>
+                <select onchange="state.mistakeSort=this.value;render()" class="input text-xs py-1 px-2" style="width:auto">
+                  ${['newest','oldest','section','source','concept'].map(s => `<option value="${s}" ${state.mistakeSort===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+                </select>
+                <input type="text" value="${state.mistakeSearch}" oninput="state.mistakeSearch=this.value;render()" placeholder="Search..." class="input text-xs py-1 px-3" style="width:180px">
+              </div>
+            </div>
+          </div>
+
+          <!-- Entry List -->
+          <div class="card overflow-hidden reveal">
+            <div class="glass-header flex justify-between items-center">
+              <h2 class="font-semibold text-sm">Mistakes</h2>
+              <span class="text-xs text-[var(--text-muted)]">${filtered.length} entries</span>
+            </div>
+            <div class="max-h-[600px] overflow-y-auto glass-list">
+              ${filtered.length === 0 ? `
+                <div class="p-8 text-center text-[var(--text-muted)]">
+                  <div class="text-3xl mb-3">${icon.alertTriangle}</div>
+                  <div class="text-sm">No mistakes logged yet.</div>
+                  <div class="text-xs mt-1">Every mistake is a lesson — start logging them above!</div>
+                </div>
+              ` : filtered.map((m, idx) => {
+                const sec = sectionMeta[m.section] || { label: '?', color: 'var(--text-muted)' };
+                const expanded = state._expandedMistake === m.id;
+                return `
+                  <div class="table-row" style="display:block;animation-delay:${idx * 25}ms;cursor:pointer" onclick="toggleMistakeExpand(${m.id})">
+                    <div style="display:flex;gap:12px;align-items:center">
+                      <span class="text-xs text-[var(--text-muted)] font-medium" style="min-width:70px">${formatDate(m.date)}</span>
+                      <span class="flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full" style="background:${sec.color}15;color:${sec.color};min-width:40px"><span class="w-1.5 h-1.5 rounded-full" style="background:${sec.color}"></span>${sec.label}</span>
+                      <span class="text-xs text-[var(--text-secondary)] font-medium" style="min-width:90px">${m.source||'—'}</span>
+                      <span class="text-sm text-[var(--text-primary)] flex-1 truncate">${(m.question||'').substring(0, 80)}${(m.question||'').length > 80 ? '...' : ''}</span>
+                      ${m.reviewed ? `<span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#4ade8020;color:#4ade80">${icon.check} Reviewed</span>` : `<span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:#fbbf2420;color:#fbbf24">Unreviewed</span>`}
+                      <span class="text-[var(--text-muted)] transition-transform ${expanded ? 'rotate-90' : ''}">${icon.arrow}</span>
+                    </div>
+                    ${expanded ? `
+                      <div class="mt-4 space-y-3 pl-2 border-l-2" style="border-color:${sec.color}40" onclick="event.stopPropagation()">
+                        ${m.concept ? `<div><span class="stat-label">Concept:</span> <span class="text-sm text-[var(--text-primary)] font-medium">${m.concept}</span></div>` : ''}
+                        <div><span class="stat-label">Question:</span><div class="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap">${m.question||'—'}</div></div>
+                        <div class="grid grid-cols-2 gap-4">
+                          <div style="background:#f8717115;border:1px solid #f8717130;border-radius:12px;padding:12px">
+                            <span class="stat-label" style="color:#f87171">My Answer:</span>
+                            <div class="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap">${m.myAnswer||'—'}</div>
+                          </div>
+                          <div style="background:#4ade8015;border:1px solid #4ade8030;border-radius:12px;padding:12px">
+                            <span class="stat-label" style="color:#4ade80">Correct Answer:</span>
+                            <div class="text-sm text-[var(--text-secondary)] mt-1 whitespace-pre-wrap">${m.correct||'—'}</div>
+                          </div>
+                        </div>
+                        ${(m.topics && m.topics.length) ? `
+                          <div>
+                            <span class="stat-label">Linked Topics:</span>
+                            <div class="flex flex-wrap gap-1 mt-1">${m.topics.map(t => `<span class="text-xs px-2 py-0.5 rounded-full" style="background:${sec.color}15;color:${sec.color}">${t}</span>`).join('')}</div>
+                          </div>
+                        ` : ''}
+                        ${(m.tags && m.tags.length) ? `
+                          <div>
+                            <span class="stat-label">Tags:</span>
+                            <div class="flex flex-wrap gap-1 mt-1">${m.tags.map(t => `<span class="text-xs px-2 py-0.5 rounded-full" style="background:var(--surface-3);color:var(--text-secondary)">#${t}</span>`).join('')}</div>
+                          </div>
+                        ` : ''}
+                        <div class="flex gap-2 mt-3 pt-3" style="border-top:1px solid var(--border-subtle)">
+                          <button onclick="event.stopPropagation();toggleMistakeReviewed(${m.id})" class="btn btn-ghost text-xs">${m.reviewed ? 'Mark Unreviewed' : `${icon.check} Mark Reviewed`}</button>
+                          <button onclick="event.stopPropagation();editMistake(${m.id})" class="btn btn-ghost text-xs">${icon.edit} Edit</button>
+                          <button onclick="event.stopPropagation();delMistake(${m.id})" class="btn btn-ghost text-xs text-[var(--alert)]">${icon.trash} Delete</button>
+                        </div>
+                      </div>
+                    ` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleMistakeTopic(topic) {
+      const idx = state.mistakeTopics.indexOf(topic);
+      if (idx >= 0) state.mistakeTopics.splice(idx, 1);
+      else state.mistakeTopics.push(topic);
+      render();
+    }
+
+    function toggleMistakeExpand(id) {
+      state._expandedMistake = state._expandedMistake === id ? null : id;
+      render();
+    }
+
+    function toggleMistakeReviewed(id) {
+      const m = state.mistakes.find(m => m.id === id);
+      if (m) { m.reviewed = !m.reviewed; save(); render(); showToast(m.reviewed ? 'Marked as reviewed' : 'Marked as unreviewed'); }
+    }
+
+    function addMistake() {
+      const date = document.getElementById('mist-date')?.value;
+      const source = document.getElementById('mist-source')?.value.trim();
+      const concept = document.getElementById('mist-concept')?.value.trim();
+      const question = document.getElementById('mist-question')?.value.trim();
+      const myAnswer = document.getElementById('mist-my-answer')?.value.trim();
+      const correct = document.getElementById('mist-correct')?.value.trim();
+      const tagsRaw = document.getElementById('mist-tags')?.value.trim();
+      const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+      if (!date || !state.mistakeSection || !question) {
+        showToast('Need at least a date, section, and question', 'error');
+        return;
+      }
+
+      const entry = {
+        id: Date.now(),
+        date,
+        section: state.mistakeSection,
+        source: source || '',
+        question,
+        myAnswer: myAnswer || '',
+        correct: correct || '',
+        concept: concept || '',
+        topics: [...state.mistakeTopics],
+        tags,
+        reviewed: false
+      };
+
+      state.mistakes.push(entry);
+      state.mistakeSection = null;
+      state.mistakeTopics = [];
+      state.mistakeTopicSearch = '';
+      save();
+      render();
+      addXP(15, 'Mistake logged');
+      showToast('Mistake logged — learn from it!');
+    }
+
+    function editMistake(id) {
+      const m = state.mistakes.find(m => m.id === id);
+      if (!m) return;
+      const sectionMeta = {
+        'cp': { label: 'C/P', color: 'var(--cp)' },
+        'cars': { label: 'CARS', color: 'var(--cars)' },
+        'bb': { label: 'B/B', color: 'var(--bb)' },
+        'ps': { label: 'P/S', color: 'var(--ps)' }
+      };
+      window._editMistakeSection = m.section;
+
+      showModal(`
+        <h2 class="text-lg font-bold mb-4">Edit Mistake</h2>
+        <div class="space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="stat-label block mb-1">Date</label><input type="date" id="edit-mist-date" value="${m.date}" class="input"></div>
+            <div><label class="stat-label block mb-1">Source</label><input type="text" id="edit-mist-source" value="${m.source||''}" class="input"></div>
+          </div>
+          <div>
+            <label class="stat-label block mb-1">Section</label>
+            <div class="flex gap-2">
+              ${Object.entries(sectionMeta).map(([key, s]) => `
+                <button onclick="window._editMistakeSection='${key}';this.parentElement.querySelectorAll('button').forEach(b=>b.style.cssText='color:var(--text-muted)');this.style.cssText='background:${s.color}20;color:${s.color};box-shadow:0 0 12px ${s.color}30'" class="px-3 py-1.5 rounded-full text-xs font-semibold transition-all" style="${m.section===key ? `background:${s.color}20;color:${s.color};box-shadow:0 0 12px ${s.color}30` : `color:var(--text-muted)`}">${s.label}</button>
+              `).join('')}
+            </div>
+          </div>
+          <div><label class="stat-label block mb-1">Concept</label><input type="text" id="edit-mist-concept" value="${m.concept||''}" class="input"></div>
+          <div><label class="stat-label block mb-1">Question</label><textarea id="edit-mist-question" rows="2" class="input" style="resize:vertical">${m.question||''}</textarea></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="stat-label block mb-1">My Answer</label><textarea id="edit-mist-my-answer" rows="2" class="input" style="resize:vertical">${m.myAnswer||''}</textarea></div>
+            <div><label class="stat-label block mb-1">Correct Answer</label><textarea id="edit-mist-correct" rows="2" class="input" style="resize:vertical">${m.correct||''}</textarea></div>
+          </div>
+          <div><label class="stat-label block mb-1">Tags (comma-separated)</label><input type="text" id="edit-mist-tags" value="${(m.tags||[]).join(', ')}" class="input"></div>
+          <div class="flex gap-2 pt-2">
+            <button onclick="saveEditMistake(${m.id})" class="btn btn-primary flex-1">Save</button>
+            <button onclick="hideModal()" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      `);
+    }
+
+    function saveEditMistake(id) {
+      const m = state.mistakes.find(m => m.id === id);
+      if (!m) return;
+      m.date = document.getElementById('edit-mist-date')?.value || m.date;
+      m.source = document.getElementById('edit-mist-source')?.value.trim() || '';
+      m.concept = document.getElementById('edit-mist-concept')?.value.trim() || '';
+      m.question = document.getElementById('edit-mist-question')?.value.trim() || '';
+      m.myAnswer = document.getElementById('edit-mist-my-answer')?.value.trim() || '';
+      m.correct = document.getElementById('edit-mist-correct')?.value.trim() || '';
+      m.section = window._editMistakeSection || m.section;
+      const tagsRaw = document.getElementById('edit-mist-tags')?.value.trim();
+      m.tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+      save();
+      hideModal();
+      render();
+      showToast('Mistake updated');
+    }
+
+    function delMistake(id) {
+      showModal(`
+        <h2 class="text-lg font-bold mb-4">Delete Mistake?</h2>
+        <p class="text-sm text-[var(--text-secondary)] mb-6">This will permanently remove this mistake entry.</p>
+        <div class="flex gap-2">
+          <button onclick="state.mistakes=state.mistakes.filter(m=>m.id!==${id});save();hideModal();render();showToast('Deleted')" class="btn btn-primary flex-1" style="background:var(--alert)">Delete</button>
+          <button onclick="hideModal()" class="btn btn-ghost flex-1">Cancel</button>
+        </div>
+      `);
     }
 
     // ===== INIT =====

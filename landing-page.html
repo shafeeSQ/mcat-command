@@ -1755,6 +1755,90 @@
       border-radius: 100px;
     }
 
+    .pricing-early-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 100px;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+      animation: badge-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes badge-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+      50% { box-shadow: 0 0 20px 4px rgba(245, 158, 11, 0.2); }
+    }
+
+    .pricing-original {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-decoration: line-through;
+      text-decoration-color: #ef4444;
+      text-decoration-thickness: 3px;
+      margin-right: 12px;
+      opacity: 0.6;
+    }
+
+    .pricing-discount-label {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pricing-spots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px 20px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 12px;
+      font-size: 13px;
+      color: #f59e0b;
+      font-weight: 600;
+    }
+
+    .pricing-spots-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f59e0b;
+      animation: spot-blink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes spot-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .pricing-spots-bar {
+      flex: 1;
+      max-width: 120px;
+      height: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .pricing-spots-fill {
+      width: 73%;
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      border-radius: 3px;
+    }
+
     .pricing-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
     .pricing-subtitle { color: var(--text-muted); margin-bottom: 24px; }
 
@@ -2179,7 +2263,7 @@
         <p>The all-in-one MCAT study dashboard that <span class="typing-line" id="typingText">tracks your progress</span><span class="typing-cursor"></span>. One file. Works offline. Yours forever.</p>
         <div class="hero-cta">
           <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large btn-magnetic gumroad-link">
-            Get Instant Access &mdash; $10
+            Get Instant Access &mdash; <span style="text-decoration:line-through;opacity:0.5">$99</span> $10
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
           <a href="#demo" class="btn btn-secondary btn-large btn-magnetic">See It In Action</a>
@@ -2843,7 +2927,7 @@
         <div class="step-card">
           <div class="step-number">1</div>
           <h3 class="step-title">Buy & Download</h3>
-          <p class="step-desc">Pay once ($10) and instantly download a single HTML file. No signup needed.</p>
+          <p class="step-desc">Pay once (<span style="text-decoration:line-through;opacity:0.5">$99</span> $10 early access) and instantly download a single HTML file. No signup needed.</p>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
@@ -3014,7 +3098,7 @@
             </tr>
             <tr>
               <td>One-time price</td>
-              <td class="highlight"><span class="check">$10</span></td>
+              <td class="highlight"><span class="check"><span style="text-decoration:line-through;opacity:0.4">$99</span> $10</span></td>
               <td><span class="check" style="color: var(--text-muted)">Free</span></td>
               <td><span class="cross">$10/mo</span></td>
             </tr>
@@ -3083,20 +3167,28 @@
   <section class="pricing" id="pricing">
     <div class="container">
       <div class="section-header animate-on-scroll">
-        <div class="section-label">Pricing</div>
-        <h2 class="section-title">One Price. <span class="gradient-text">Everything Included.</span></h2>
-        <p class="section-desc">No subscriptions. No hidden fees. Pay once, use forever.</p>
+        <div class="section-label">Early Access Pricing</div>
+        <h2 class="section-title">Launch Price. <span class="gradient-text">Everything Included.</span></h2>
+        <p class="section-desc">First 100 users get 90% off. No subscriptions. Pay once, use forever.</p>
       </div>
 
       <div class="pricing-card animate-on-scroll" style="animation: glow-pulse 3s ease-in-out infinite;">
-        <div class="pricing-badge">Best Value</div>
+        <div class="pricing-badge">Early Access</div>
         <h3 class="pricing-title">MCAT Command Center</h3>
         <p class="pricing-subtitle">Complete MCAT Study Dashboard</p>
+        <div class="pricing-early-badge">&#x1F525; Launch Price &mdash; First 100 Users</div>
+        <div class="pricing-discount-label">90% OFF</div>
         <div class="pricing-price">
+          <span class="pricing-original">$99</span>
           <span class="pricing-currency">$</span>
           <span class="pricing-amount">10</span>
         </div>
         <p class="pricing-period">One-time payment &bull; Lifetime access</p>
+        <div class="pricing-spots">
+          <div class="pricing-spots-dot"></div>
+          <span>73 of 100 spots claimed</span>
+          <div class="pricing-spots-bar"><div class="pricing-spots-fill"></div></div>
+        </div>
 
         <div class="pricing-features">
           <div class="pricing-feature">
@@ -3261,10 +3353,10 @@
         <h2>Ready to <span class="gradient-text">Crush the MCAT?</span></h2>
         <p>Stop wasting time building spreadsheets. Start studying smarter today.</p>
         <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-large gumroad-link">
-          Get Started for $10
+          Get Started &mdash; <span style="text-decoration:line-through;opacity:0.5">$99</span> $10
           <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
-        <p class="cta-guarantee">Instant download &bull; No subscription &bull; Yours forever</p>
+        <p class="cta-guarantee">&#x1F525; Early access pricing &bull; 27 spots remaining &bull; Yours forever</p>
       </div>
     </div>
   </section>
@@ -3274,7 +3366,7 @@
     <div class="container">
       <div>
         <span class="sticky-cta-text">Ready to ace the MCAT?</span>
-        <span class="sticky-cta-price">Just $10</span>
+        <span class="sticky-cta-price"><span style="text-decoration:line-through;opacity:0.4;font-weight:400">$99</span> Just $10</span>
       </div>
       <a href="https://shafee5.gumroad.com/l/bftltz" class="btn btn-primary btn-magnetic gumroad-link" style="padding:12px 24px;font-size:14px;">
         Get Instant Access
